@@ -8,13 +8,7 @@
 
 import SpriteKit
 
-struct PhysicsCategory {
-	static let None			: UInt32 = 0x0
-	static let All			: UInt32 = UInt32.max
-	static let Ball			: UInt32 = 0x1 << 0
-	static let Boards		: UInt32 = 0x1 << 1
-	static let Player		: UInt32 = 0x1 << 2
-}
+
 
 class SoccerScene: SKScene, SKPhysicsContactDelegate {
 	
@@ -24,7 +18,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		let screenRect = UIScreen.mainScreen().bounds
 		
 		// Setup Physics
-		physicsWorld.gravity = CGVectorMake(0, 0)
+		physicsWorld.gravity = CGVectorMake(0, -1.0)
 		physicsWorld.contactDelegate = self
 		
 		// Create boundary for field
@@ -32,14 +26,18 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		let boundaryBody = SKPhysicsBody(edgeLoopFromRect: FieldBoundary)
 		self.physicsBody = boundaryBody
 		self.physicsBody?.categoryBitMask = PhysicsCategory.Boards
-		self.physicsBody?.contactTestBitMask = PhysicsCategory.Ball | PhysicsCategory.Player
+		self.physicsBody?.contactTestBitMask = PhysicsCategory.Ball | PhysicsCategory.Car
 		
 		
 		// Field
 		let Field = SKSpriteNode(color: SKColor.greenColor(), size: CGSize(width: frame.size.width, height: frame.size.height))
 		Field.position = CGPoint(x: frame.midX, y: frame.midY)
-		
 		addChild(Field)
+		
+		// Add a car
+		let carSpawnSpot = CGPoint(x: frame.midX, y: frame.midY)
+		let car1 = Car(spawnPosition: carSpawnSpot)
+		addChild(car1)
 		
     }
 	

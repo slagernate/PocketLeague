@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		43DF8DAE1D76742000F7C9C0 /* SoccerSceneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DF8DAD1D76742000F7C9C0 /* SoccerSceneViewController.swift */; };
 		43DF8DB41D77996E00F7C9C0 /* MainMenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DF8DB31D77996E00F7C9C0 /* MainMenuScene.swift */; };
+		43DF8DB71D77ABBC00F7C9C0 /* PhysicalObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DF8DB61D77ABBC00F7C9C0 /* PhysicalObject.swift */; };
+		43DF8DB91D77B0F700F7C9C0 /* PhysicsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DF8DB81D77B0F700F7C9C0 /* PhysicsHandler.swift */; };
+		43DF8DBB1D77B90A00F7C9C0 /* Car.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DF8DBA1D77B90A00F7C9C0 /* Car.swift */; };
+		43DF8DC11D77C52300F7C9C0 /* BasicCar.png in Resources */ = {isa = PBXBuildFile; fileRef = 43DF8DC01D77C52300F7C9C0 /* BasicCar.png */; };
 		43FE94E81D750E3500076646 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43FE94E71D750E3500076646 /* AppDelegate.swift */; };
 		43FE94EC1D750E3500076646 /* SoccerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43FE94EB1D750E3500076646 /* SoccerScene.swift */; };
 		43FE94F11D750E3500076646 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 43FE94EF1D750E3500076646 /* Main.storyboard */; };
@@ -19,6 +23,10 @@
 /* Begin PBXFileReference section */
 		43DF8DAD1D76742000F7C9C0 /* SoccerSceneViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoccerSceneViewController.swift; sourceTree = "<group>"; };
 		43DF8DB31D77996E00F7C9C0 /* MainMenuScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenuScene.swift; sourceTree = "<group>"; };
+		43DF8DB61D77ABBC00F7C9C0 /* PhysicalObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhysicalObject.swift; sourceTree = "<group>"; };
+		43DF8DB81D77B0F700F7C9C0 /* PhysicsHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhysicsHandler.swift; sourceTree = "<group>"; };
+		43DF8DBA1D77B90A00F7C9C0 /* Car.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Car.swift; sourceTree = "<group>"; };
+		43DF8DC01D77C52300F7C9C0 /* BasicCar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BasicCar.png; sourceTree = "<group>"; };
 		43FE94E41D750E3500076646 /* NCSoccer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NCSoccer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		43FE94E71D750E3500076646 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		43FE94EB1D750E3500076646 /* SoccerScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoccerScene.swift; sourceTree = "<group>"; };
@@ -39,6 +47,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		43DF8DBE1D77C52300F7C9C0 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				43DF8DBF1D77C52300F7C9C0 /* Cars */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		43DF8DBF1D77C52300F7C9C0 /* Cars */ = {
+			isa = PBXGroup;
+			children = (
+				43DF8DC01D77C52300F7C9C0 /* BasicCar.png */,
+			);
+			path = Cars;
+			sourceTree = "<group>";
+		};
 		43FE94DB1D750E3500076646 = {
 			isa = PBXGroup;
 			children = (
@@ -58,10 +82,14 @@
 		43FE94E61D750E3500076646 /* NCSoccer */ = {
 			isa = PBXGroup;
 			children = (
+				43DF8DBE1D77C52300F7C9C0 /* Resources */,
 				43FE94E71D750E3500076646 /* AppDelegate.swift */,
 				43DF8DB31D77996E00F7C9C0 /* MainMenuScene.swift */,
 				43FE94EB1D750E3500076646 /* SoccerScene.swift */,
 				43DF8DAD1D76742000F7C9C0 /* SoccerSceneViewController.swift */,
+				43DF8DB61D77ABBC00F7C9C0 /* PhysicalObject.swift */,
+				43DF8DBA1D77B90A00F7C9C0 /* Car.swift */,
+				43DF8DB81D77B0F700F7C9C0 /* PhysicsHandler.swift */,
 				43FE94EF1D750E3500076646 /* Main.storyboard */,
 				43FE94F21D750E3500076646 /* Assets.xcassets */,
 				43FE94F41D750E3500076646 /* LaunchScreen.storyboard */,
@@ -131,6 +159,7 @@
 				43FE94F61D750E3500076646 /* LaunchScreen.storyboard in Resources */,
 				43FE94F31D750E3500076646 /* Assets.xcassets in Resources */,
 				43FE94F11D750E3500076646 /* Main.storyboard in Resources */,
+				43DF8DC11D77C52300F7C9C0 /* BasicCar.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,7 +172,10 @@
 			files = (
 				43FE94EC1D750E3500076646 /* SoccerScene.swift in Sources */,
 				43DF8DAE1D76742000F7C9C0 /* SoccerSceneViewController.swift in Sources */,
+				43DF8DB91D77B0F700F7C9C0 /* PhysicsHandler.swift in Sources */,
+				43DF8DB71D77ABBC00F7C9C0 /* PhysicalObject.swift in Sources */,
 				43DF8DB41D77996E00F7C9C0 /* MainMenuScene.swift in Sources */,
+				43DF8DBB1D77B90A00F7C9C0 /* Car.swift in Sources */,
 				43FE94E81D750E3500076646 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
