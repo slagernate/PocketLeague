@@ -7,19 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		43DF8DAE1D76742000F7C9C0 /* SoccerSceneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DF8DAD1D76742000F7C9C0 /* SoccerSceneViewController.swift */; };
+		43DF8DB41D77996E00F7C9C0 /* MainMenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DF8DB31D77996E00F7C9C0 /* MainMenuScene.swift */; };
 		43FE94E81D750E3500076646 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43FE94E71D750E3500076646 /* AppDelegate.swift */; };
-		43FE94EC1D750E3500076646 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43FE94EB1D750E3500076646 /* GameScene.swift */; };
-		43FE94EE1D750E3500076646 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43FE94ED1D750E3500076646 /* GameViewController.swift */; };
+		43FE94EC1D750E3500076646 /* SoccerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43FE94EB1D750E3500076646 /* SoccerScene.swift */; };
 		43FE94F11D750E3500076646 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 43FE94EF1D750E3500076646 /* Main.storyboard */; };
 		43FE94F31D750E3500076646 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 43FE94F21D750E3500076646 /* Assets.xcassets */; };
 		43FE94F61D750E3500076646 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 43FE94F41D750E3500076646 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		43DF8DAD1D76742000F7C9C0 /* SoccerSceneViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoccerSceneViewController.swift; sourceTree = "<group>"; };
+		43DF8DB31D77996E00F7C9C0 /* MainMenuScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenuScene.swift; sourceTree = "<group>"; };
 		43FE94E41D750E3500076646 /* NCSoccer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NCSoccer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		43FE94E71D750E3500076646 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		43FE94EB1D750E3500076646 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
-		43FE94ED1D750E3500076646 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		43FE94EB1D750E3500076646 /* SoccerScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoccerScene.swift; sourceTree = "<group>"; };
 		43FE94F01D750E3500076646 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		43FE94F21D750E3500076646 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		43FE94F51D750E3500076646 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -57,8 +59,9 @@
 			isa = PBXGroup;
 			children = (
 				43FE94E71D750E3500076646 /* AppDelegate.swift */,
-				43FE94EB1D750E3500076646 /* GameScene.swift */,
-				43FE94ED1D750E3500076646 /* GameViewController.swift */,
+				43DF8DB31D77996E00F7C9C0 /* MainMenuScene.swift */,
+				43FE94EB1D750E3500076646 /* SoccerScene.swift */,
+				43DF8DAD1D76742000F7C9C0 /* SoccerSceneViewController.swift */,
 				43FE94EF1D750E3500076646 /* Main.storyboard */,
 				43FE94F21D750E3500076646 /* Assets.xcassets */,
 				43FE94F41D750E3500076646 /* LaunchScreen.storyboard */,
@@ -138,8 +141,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				43FE94EC1D750E3500076646 /* GameScene.swift in Sources */,
-				43FE94EE1D750E3500076646 /* GameViewController.swift in Sources */,
+				43FE94EC1D750E3500076646 /* SoccerScene.swift in Sources */,
+				43DF8DAE1D76742000F7C9C0 /* SoccerSceneViewController.swift in Sources */,
+				43DF8DB41D77996E00F7C9C0 /* MainMenuScene.swift in Sources */,
 				43FE94E81D750E3500076646 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

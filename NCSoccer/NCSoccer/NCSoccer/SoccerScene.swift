@@ -1,5 +1,5 @@
 //
-//  GameScene.swift
+//  SoccerScene.swift
 //  NCSoccer
 //
 //  Created by Nathan Slager on 8/29/16.
@@ -16,17 +16,19 @@ struct PhysicsCategory {
 	static let Player		: UInt32 = 0x1 << 2
 }
 
-class GameScene: SKScene, SKPhysicsContactDelegate {
+class SoccerScene: SKScene, SKPhysicsContactDelegate {
 	
 	
     override func didMoveToView(view: SKView) {
+		
+		let screenRect = UIScreen.mainScreen().bounds
 		
 		// Setup Physics
 		physicsWorld.gravity = CGVectorMake(0, 0)
 		physicsWorld.contactDelegate = self
 		
 		// Create boundary for field
-		let FieldBoundary = CGRect(x: 0, y: 0, width: screenSize.width, height: screenSize.height)
+		let FieldBoundary = CGRect(x: 0, y: 0, width: screenRect.width, height: screenRect.height)
 		let boundaryBody = SKPhysicsBody(edgeLoopFromRect: FieldBoundary)
 		self.physicsBody = boundaryBody
 		self.physicsBody?.categoryBitMask = PhysicsCategory.Boards
@@ -35,6 +37,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		
 		// Field
 		let Field = SKSpriteNode(color: SKColor.greenColor(), size: CGSize(width: frame.size.width, height: frame.size.height))
+		Field.position = CGPoint(x: frame.midX, y: frame.midY)
 		
 		addChild(Field)
 		
