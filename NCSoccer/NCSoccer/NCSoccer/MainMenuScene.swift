@@ -33,7 +33,7 @@ class MainMenuScene: SKScene {
 		
 		// Add a "champion archer title"
 		let titleLabel = SKLabelNode(fontNamed: gill)
-		titleLabel.text = "Champ Archer"
+		titleLabel.text = "NC Soccer"
 		titleLabel.fontSize = screenSize.width/10
 		titleLabel.fontColor = UIColor.whiteColor()
 		titleLabel.position = CGPoint(x: size.width/2, y: size.height*3/4)

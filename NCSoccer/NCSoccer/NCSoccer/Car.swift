@@ -10,7 +10,7 @@ import SpriteKit
 
 class Car: PhysicalObject {
 
-    let MAXCARSPEED :CGFloat = 0.08
+    let MAXCARSPEED :CGFloat = 0.5
 	var accelerate: Bool
 	var steerRight: Bool
 	var steerLeft: Bool
@@ -41,6 +41,9 @@ class Car: PhysicalObject {
 		self.physicsBody = SKPhysicsBody(rectangleOfSize: carPhysicsSize)
 		self.objectMass = CGFloat(20)
 		self.physicsBody?.friction = 0.5
+		self.physicsBody?.angularDamping = 1.0
+		self.physicsBody?.linearDamping = 1.0
+		self.physicsBody?.restitution = 1.0
 		physicsBody?.dynamic = true // Default is true
 
 		
