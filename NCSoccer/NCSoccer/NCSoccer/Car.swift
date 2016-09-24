@@ -28,7 +28,7 @@ class Car: PhysicalObject {
     	self.steerRight = false
     	self.steerLeft = false
 		
-		super.init(texture: carTexture, color: UIColor.clearColor(), size: carSize)
+		super.init(texture: carTexture, color: UIColor.clear, size: carSize)
 		
 		
 		self.speed = CGFloat(MAXCARSPEED)
@@ -38,13 +38,13 @@ class Car: PhysicalObject {
 		//Physics Setup
 		//self.physicsBody = SKPhysicsBody(edgeLoopFromRect: CGRect(origin: spawnPosition, size: carSize) )
 		let carPhysicsSize = CGSize(width: self.size.width, height: self.size.height)
-		self.physicsBody = SKPhysicsBody(rectangleOfSize: carPhysicsSize)
+		self.physicsBody = SKPhysicsBody(rectangleOf: carPhysicsSize)
 		self.objectMass = CGFloat(20)
 		self.physicsBody?.friction = 0.5
 		self.physicsBody?.angularDamping = 1.0
 		self.physicsBody?.linearDamping = 1.0
 		self.physicsBody?.restitution = 1.0
-		physicsBody?.dynamic = true // Default is true
+		physicsBody?.isDynamic = true // Default is true
 
 		
 		self.physicsBody?.categoryBitMask = PhysicsCategory.Car

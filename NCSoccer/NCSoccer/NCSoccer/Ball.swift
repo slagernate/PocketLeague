@@ -22,7 +22,7 @@ class Ball: PhysicalObject {
 		let ballRadius = CGFloat(25)
 		let ballSize = CGSize(width: ballRadius, height: ballRadius)
 
-		super.init(texture: ballTexture, color: UIColor.clearColor(), size: ballSize)
+		super.init(texture: ballTexture, color: UIColor.clear, size: ballSize)
 		
 		self.position = spawnPosition
 		
@@ -32,7 +32,7 @@ class Ball: PhysicalObject {
 		//self.physicsBody = SKPhysicsBody(edgeLoopFromRect: CGRect(origin: spawnPosition, size: carSize) )
 		self.physicsBody = SKPhysicsBody(circleOfRadius: self.size.height/2)
 		self.objectMass = CGFloat(2)
-		physicsBody?.dynamic = true // Default is true
+		physicsBody?.isDynamic = true // Default is true
 		
 		
 		self.physicsBody?.categoryBitMask = PhysicsCategory.Ball

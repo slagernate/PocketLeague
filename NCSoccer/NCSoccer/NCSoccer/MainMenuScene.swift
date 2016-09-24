@@ -29,13 +29,13 @@ class MainMenuScene: SKScene {
 
 		adjustedSize = CGFloat((screenSize.width + screenSize.height)/2.0)
 		
-		backgroundColor = UIColor.blackColor()
+		backgroundColor = UIColor.black
 		
 		// Add a "champion archer title"
 		let titleLabel = SKLabelNode(fontNamed: gill)
 		titleLabel.text = "NC Soccer"
 		titleLabel.fontSize = screenSize.width/10
-		titleLabel.fontColor = UIColor.whiteColor()
+		titleLabel.fontColor = UIColor.white
 		titleLabel.position = CGPoint(x: size.width/2, y: size.height*3/4)
 		addChild(titleLabel)
 		
@@ -43,12 +43,12 @@ class MainMenuScene: SKScene {
 		playLabel = SKLabelNode(fontNamed: gill)
 		playLabel.text = "Play"
 		playLabel.fontSize = screenSize.width/14
-		playLabel.fontColor = UIColor.whiteColor()
+		playLabel.fontColor = UIColor.white
 		playLabel.position = CGPoint(x: size.width/2, y: size.height*1/2)
 		addChild(playLabel)
 		
 		// Slap an skspitenode (button) on top of the play label
-		let playNode = SKSpriteNode(color: UIColor.clearColor(), size: CGSize(width: size.width/8, height: size.height/8.0))
+		let playNode = SKSpriteNode(color: UIColor.clear, size: CGSize(width: size.width/8, height: size.height/8.0))
 		playNode.position = CGPoint(x: 0, y: screenSize.height/27)
 		playNode.name = "playButton"
 		playLabel.addChild(playNode)
@@ -57,12 +57,12 @@ class MainMenuScene: SKScene {
 		howtoLabel = SKLabelNode(fontNamed: gill)
 		howtoLabel.text = "How To Play"
 		howtoLabel.fontSize = screenSize.width/14
-		howtoLabel.fontColor = UIColor.whiteColor()
+		howtoLabel.fontColor = UIColor.white
 		howtoLabel.position = CGPoint(x: size.width/2, y: size.height*1/4)
 		addChild(howtoLabel)
 		
 		// Slap an skspitenode (button) on top of the howto label
-		let howNode = SKSpriteNode(color: UIColor.clearColor(), size: CGSize(width: size.width*4/10, height: size.height/8.0))
+		let howNode = SKSpriteNode(color: UIColor.clear, size: CGSize(width: size.width*4/10, height: size.height/8.0))
 		howNode.position = CGPoint(x: 0, y: screenSize.height/27)
 		howNode.name = "howTo"
 		howtoLabel.addChild(howNode)
@@ -75,10 +75,10 @@ class MainMenuScene: SKScene {
 	
 	
 	
-	override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 		for Touch in touches {
-			if self.nodeAtPoint(Touch.locationInNode(self)) is SKSpriteNode {
-				let testNode = self.nodeAtPoint(Touch.locationInNode(self)) as! SKSpriteNode
+			if self.atPoint(Touch.location(in: self)) is SKSpriteNode {
+				let testNode = self.atPoint(Touch.location(in: self)) as! SKSpriteNode
 				if testNode.name! == "playButton" {
 					playLabel.alpha = 0.7
 					//runAction(playMenuSound)
@@ -91,21 +91,21 @@ class MainMenuScene: SKScene {
 	}
 	
 	func showAds() {
-		NSNotificationCenter.defaultCenter().postNotificationName("showBanner", object: nil)
+		NotificationCenter.default.post(name: Notification.Name(rawValue: "showBanner"), object: nil)
 	}
 	
 	func hideAds() {
-		NSNotificationCenter.defaultCenter().postNotificationName("hideBanner", object: nil)
+		NotificationCenter.default.post(name: Notification.Name(rawValue: "hideBanner"), object: nil)
 	}
 	
-	override func update(currentTime: NSTimeInterval) {
-		NSNotificationCenter.defaultCenter().postNotificationName("checkBanner", object: nil)
+	override func update(_ currentTime: TimeInterval) {
+		NotificationCenter.default.post(name: Notification.Name(rawValue: "checkBanner"), object: nil)
 	}
 	
-	override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+	override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
 		for Touch in touches {
-			if self.nodeAtPoint(Touch.locationInNode(self)) is SKSpriteNode {
-				let testNode = self.nodeAtPoint(Touch.locationInNode(self)) as! SKSpriteNode
+			if self.atPoint(Touch.location(in: self)) is SKSpriteNode {
+				let testNode = self.atPoint(Touch.location(in: self)) as! SKSpriteNode
 				if testNode.name! != "playButton" {
 					playLabel.alpha = 1.0
 				}
@@ -119,16 +119,16 @@ class MainMenuScene: SKScene {
 		}
 	}
 	
-	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
 		for Touch in touches {
-			if self.nodeAtPoint(Touch.locationInNode(self)) is SKSpriteNode {
-				let testNode = self.nodeAtPoint(Touch.locationInNode(self)) as! SKSpriteNode
+			if self.atPoint(Touch.location(in: self)) is SKSpriteNode {
+				let testNode = self.atPoint(Touch.location(in: self)) as! SKSpriteNode
 				if testNode.name! == "playButton" {
 					let skView = self.view as SKView!
 					let scene = SoccerScene(size: size)
 					//hideAds()
-					let pushInDirection = SKTransition.pushWithDirection(SKTransitionDirection.Left, duration: 0.4)
-					skView.presentScene(scene, transition:  pushInDirection)
+					let pushInDirection = SKTransition.push(with: SKTransitionDirection.left, duration: 0.4)
+					skView?.presentScene(scene, transition:  pushInDirection)
 				} /*else if testNode.name! == "howTo" {
 					let scene = InstructionsScene(size: self.view!.bounds.size)
 					hideAds()

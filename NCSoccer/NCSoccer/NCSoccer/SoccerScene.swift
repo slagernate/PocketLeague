@@ -14,18 +14,18 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 	
 	var car1: Car! = nil
 	
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
 		
 		//let screenRect = UIScreen.mainScreen().bounds
 		
 		// Physics
-		physicsWorld.gravity = CGVectorMake(0, 0)
+		physicsWorld.gravity = CGVector(dx: 0, dy: 0)
 		
 		physicsWorld.contactDelegate = self
 		
 		// Create boundary for field
 		//let FieldBoundary = CGRect(x: 0, y: 0, width: screenRect.width, height: screenRect.height)
-		let boundaryBody = SKPhysicsBody(edgeLoopFromRect: self.frame)
+		let boundaryBody = SKPhysicsBody(edgeLoopFrom: self.frame)
 		//let boundaryBody = SKPhysicsBody(edgeLoopFromRect: screenRect)
 		self.physicsBody = boundaryBody
 		self.physicsBody?.categoryBitMask = PhysicsCategory.Boards
@@ -33,7 +33,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		
 		
 		// Field
-		let Field = SKSpriteNode(color: SKColor.greenColor(), size: CGSize(width: frame.size.width, height: frame.size.height))
+		let Field = SKSpriteNode(color: SKColor.green, size: CGSize(width: frame.size.width, height: frame.size.height))
 		Field.position = CGPoint(x: frame.midX, y: frame.midY)
 		addChild(Field)
 		
@@ -51,12 +51,12 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
     }
 	
 	// MARK: - Touch Handling
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
        /* Called when a touch begins */
 		/* Test code splits up screen to act as controls */
 		for Touch in touches {
-			if Touch.locationInNode(self).x < frame.midX { // touch on left side of screen
-				if Touch.locationInNode(self).x < frame.midX/2.0 { // touch on left quarter of screen // turn left
+			if Touch.location(in: self).x < frame.midX { // touch on left side of screen
+				if Touch.location(in: self).x < frame.midX/2.0 { // touch on left quarter of screen // turn left
 					car1.steerLeft = true
 					car1.steerRight = false
 				} else { // Touch on 2nd quarter of screen // turn right
@@ -69,13 +69,13 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		}
 	}
 	
-	override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+	override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
 		var accelerating = 0
 		var turnRight = 0x0
 		var turnLeft = 0x0
 		for Touch in touches {
-			if Touch.locationInNode(self).x < frame.midX { // touch on left side of screen
-    			if Touch.locationInNode(self).x < frame.midX/2.0 { // touch on left quarter of screen
+			if Touch.location(in: self).x < frame.midX { // touch on left side of screen
+    			if Touch.location(in: self).x < frame.midX/2.0 { // touch on left quarter of screen
 					turnLeft |= 0x1
     			} else { // Touch on 2nd quarter of screen
 					turnRight |= 0x1
@@ -106,10 +106,10 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		
 	}
 	
-	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
 		for Touch in touches {
-			if Touch.locationInNode(self).x < frame.midX { // touch on left side of screen
-    			if Touch.locationInNode(self).x < frame.midX/2.0 { // touch on left quarter of screen
+			if Touch.location(in: self).x < frame.midX { // touch on left side of screen
+    			if Touch.location(in: self).x < frame.midX/2.0 { // touch on left quarter of screen
     				car1.steerLeft = false
     			} else { // Touch on 2nd quarter of screen
     				car1.steerRight = false
@@ -122,7 +122,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 	}
 	
 	// MARK: - Frame Cycle
-    override func update(currentTime: CFTimeInterval) {
+    override func update(_ currentTime: TimeInterval) {
         /* Called before each frame is rendered */
 		
 		// Really Strange syntax. Blocks are confusing but they're needed here for the
@@ -131,7 +131,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		// and UnsafeMutablePointer<ObjCBool> and return type void. Then I'm setting that
 		// equal to an actual function with with specific parameter names. Idk it just works lol
 		// Pretty sure this is like a 1 to 1 translation to a C function pointer.
-		let updateNode: (SKNode!, UnsafeMutablePointer<ObjCBool>) -> Void = {
+		let updateNode: (SKNode?, UnsafeMutablePointer<ObjCBool>) -> Void = {
 			(node, NilLiteralConvertible) -> Void in
 			
 			// Update car rotation
@@ -162,12 +162,12 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 			
 			if (self.car1.accelerate) {
     			if (carVelocity < 120) {
-        			self.car1.physicsBody?.applyImpulse(CGVectorMake(CGFloat(cos(self.car1.zRotation)) * self.car1.speed, CGFloat(sin(self.car1.zRotation)) * self.car1.speed))
+        			self.car1.physicsBody?.applyImpulse(CGVector(dx: CGFloat(cos(self.car1.zRotation)) * self.car1.speed, dy: CGFloat(sin(self.car1.zRotation)) * self.car1.speed))
     			}
     		}
 		}
 		
-		self.enumerateChildNodesWithName("car", usingBlock: updateNode)
+		self.enumerateChildNodes(withName: "car", using: updateNode)
 		
     }
 }

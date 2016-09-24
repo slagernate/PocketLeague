@@ -36,7 +36,7 @@ class SoccerSceneViewController: UIViewController {
 		
 		
 		print("loading view")
-		let scene = MainMenuScene(size: CGSizeMake(viewSize.height, viewSize.width))
+		let scene = MainMenuScene(size: CGSize(width: viewSize.height, height: viewSize.width))
 		
 		// Configure the view.
         let skView = self.view as! SKView
@@ -50,22 +50,22 @@ class SoccerSceneViewController: UIViewController {
         skView.ignoresSiblingOrder = true
 		
         /* Set the scale mode to scale to fit the window */
-        scene.scaleMode = .AspectFill
+        scene.scaleMode = .aspectFill
 		
 		print("about to present game scene")
 		skView.presentScene(scene)
 		
     }
 
-    override func shouldAutorotate() -> Bool {
+    override var shouldAutorotate : Bool {
         return true
     }
 
-    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            return .AllButUpsideDown
+    override var supportedInterfaceOrientations : UIInterfaceOrientationMask {
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            return .allButUpsideDown
         } else {
-            return .All
+            return .all
         }
     }
 
@@ -74,7 +74,7 @@ class SoccerSceneViewController: UIViewController {
         // Release any cached data, images, etc that aren't in use.
     }
 
-    override func prefersStatusBarHidden() -> Bool {
+    override var prefersStatusBarHidden : Bool {
         return true
     }
 }

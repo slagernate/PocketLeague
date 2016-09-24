@@ -17,7 +17,7 @@ class PhysicalObject: SKSpriteNode {
 		self.name = "physicalObject"
 		
 		//Physics setup
-		physicsBody?.usesPreciseCollisionDetection
+		physicsBody?.usesPreciseCollisionDetection = true
 		physicsBody?.affectedByGravity = true
 		
     }
