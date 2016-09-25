@@ -7,8 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		430B3B701D97763F002E00B2 /* joyStickBase2.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 430B3B6F1D97763F002E00B2 /* joyStickBase2.PNG */; };
 		433A0F071D8F3A5200F64CA4 /* Ball.swift in Sources */ = {isa = PBXBuildFile; fileRef = 433A0F061D8F3A5200F64CA4 /* Ball.swift */; };
 		433A0F101D8F425400F64CA4 /* ball.png in Resources */ = {isa = PBXBuildFile; fileRef = 433A0F0F1D8F425400F64CA4 /* ball.png */; };
+		4340E4301D975080004A76FC /* joyStick.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 4340E42E1D975080004A76FC /* joyStick.PNG */; };
+		4340E4311D975080004A76FC /* joyStick@2000x2000.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 4340E42F1D975080004A76FC /* joyStick@2000x2000.PNG */; };
+		43BF73791D975AAC00EFE1FB /* Joystick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43BF73781D975AAC00EFE1FB /* Joystick.swift */; };
+		43BF737B1D97632F00EFE1FB /* joyStickBase@3000x3000.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 43BF737A1D97632F00EFE1FB /* joyStickBase@3000x3000.PNG */; };
 		43DF8DAE1D76742000F7C9C0 /* SoccerSceneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DF8DAD1D76742000F7C9C0 /* SoccerSceneViewController.swift */; };
 		43DF8DB41D77996E00F7C9C0 /* MainMenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DF8DB31D77996E00F7C9C0 /* MainMenuScene.swift */; };
 		43DF8DB71D77ABBC00F7C9C0 /* PhysicalObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DF8DB61D77ABBC00F7C9C0 /* PhysicalObject.swift */; };
@@ -23,8 +28,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		430B3B6F1D97763F002E00B2 /* joyStickBase2.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = joyStickBase2.PNG; sourceTree = "<group>"; };
 		433A0F061D8F3A5200F64CA4 /* Ball.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ball.swift; sourceTree = "<group>"; };
 		433A0F0F1D8F425400F64CA4 /* ball.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ball.png; sourceTree = "<group>"; };
+		4340E42E1D975080004A76FC /* joyStick.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = joyStick.PNG; sourceTree = "<group>"; };
+		4340E42F1D975080004A76FC /* joyStick@2000x2000.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "joyStick@2000x2000.PNG"; sourceTree = "<group>"; };
+		43BF73781D975AAC00EFE1FB /* Joystick.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Joystick.swift; sourceTree = "<group>"; };
+		43BF737A1D97632F00EFE1FB /* joyStickBase@3000x3000.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "joyStickBase@3000x3000.PNG"; sourceTree = "<group>"; };
 		43DF8DAD1D76742000F7C9C0 /* SoccerSceneViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoccerSceneViewController.swift; sourceTree = "<group>"; };
 		43DF8DB31D77996E00F7C9C0 /* MainMenuScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenuScene.swift; sourceTree = "<group>"; };
 		43DF8DB61D77ABBC00F7C9C0 /* PhysicalObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhysicalObject.swift; sourceTree = "<group>"; };
@@ -59,11 +69,31 @@
 			name = Balls;
 			sourceTree = "<group>";
 		};
+		4340E42C1D974F25004A76FC /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				4340E42D1D974F52004A76FC /* ControlButtons */,
+				43DF8DBF1D77C52300F7C9C0 /* Cars */,
+				433A0F081D8F3C6200F64CA4 /* Balls */,
+			);
+			name = Images;
+			sourceTree = "<group>";
+		};
+		4340E42D1D974F52004A76FC /* ControlButtons */ = {
+			isa = PBXGroup;
+			children = (
+				430B3B6F1D97763F002E00B2 /* joyStickBase2.PNG */,
+				43BF737A1D97632F00EFE1FB /* joyStickBase@3000x3000.PNG */,
+				4340E42E1D975080004A76FC /* joyStick.PNG */,
+				4340E42F1D975080004A76FC /* joyStick@2000x2000.PNG */,
+			);
+			name = ControlButtons;
+			sourceTree = "<group>";
+		};
 		43DF8DBE1D77C52300F7C9C0 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				433A0F081D8F3C6200F64CA4 /* Balls */,
-				43DF8DBF1D77C52300F7C9C0 /* Cars */,
+				4340E42C1D974F25004A76FC /* Images */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -99,6 +129,7 @@
 				43FE94E71D750E3500076646 /* AppDelegate.swift */,
 				43DF8DB31D77996E00F7C9C0 /* MainMenuScene.swift */,
 				43FE94EB1D750E3500076646 /* SoccerScene.swift */,
+				43BF73781D975AAC00EFE1FB /* Joystick.swift */,
 				433A0F061D8F3A5200F64CA4 /* Ball.swift */,
 				43DF8DAD1D76742000F7C9C0 /* SoccerSceneViewController.swift */,
 				43DF8DB61D77ABBC00F7C9C0 /* PhysicalObject.swift */,
@@ -172,10 +203,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				430B3B701D97763F002E00B2 /* joyStickBase2.PNG in Resources */,
 				43FE94F61D750E3500076646 /* LaunchScreen.storyboard in Resources */,
+				4340E4311D975080004A76FC /* joyStick@2000x2000.PNG in Resources */,
+				4340E4301D975080004A76FC /* joyStick.PNG in Resources */,
 				433A0F101D8F425400F64CA4 /* ball.png in Resources */,
 				43FE94F31D750E3500076646 /* Assets.xcassets in Resources */,
 				43FE94F11D750E3500076646 /* Main.storyboard in Resources */,
+				43BF737B1D97632F00EFE1FB /* joyStickBase@3000x3000.PNG in Resources */,
 				43DF8DC11D77C52300F7C9C0 /* BasicCar.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -187,6 +222,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43BF73791D975AAC00EFE1FB /* Joystick.swift in Sources */,
 				433A0F071D8F3A5200F64CA4 /* Ball.swift in Sources */,
 				43FE94EC1D750E3500076646 /* SoccerScene.swift in Sources */,
 				43DF8DAE1D76742000F7C9C0 /* SoccerSceneViewController.swift in Sources */,
@@ -313,8 +349,10 @@
 		43FE94FB1D750E3500076646 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				INFOPLIST_FILE = NCSoccer/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -327,8 +365,10 @@
 		43FE94FC1D750E3500076646 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				INFOPLIST_FILE = NCSoccer/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

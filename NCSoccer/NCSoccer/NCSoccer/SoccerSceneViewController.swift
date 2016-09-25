@@ -44,7 +44,7 @@ class SoccerSceneViewController: UIViewController {
         skView.showsNodeCount = true
 		
 		// Physics Debug
-		skView.showsPhysics = true
+		skView.showsPhysics = false
 	
         /* Sprite Kit applies additional optimizations to improve rendering performance */
         skView.ignoresSiblingOrder = true

@@ -24,6 +24,8 @@ class MainMenuScene: SKScene {
 		
 		//showAds()
 		
+		// Load joystick 
+		
 		// Load sound
 		//playMenuSound = SKAction.playSoundFileNamed("menu.mp3", waitForCompletion: true)
 

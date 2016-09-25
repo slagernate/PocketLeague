@@ -12,7 +12,13 @@ import SpriteKit
 
 class SoccerScene: SKScene, SKPhysicsContactDelegate {
 	
-	var car1: Car! = nil
+	var car1: Car!
+	
+	// Controls
+	var touchingJoystick: Bool = false
+	var joyStickCenter: CGVector!
+	var joyStick: Joystick!
+	
 	
     override func didMove(to view: SKView) {
 		
@@ -31,7 +37,13 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		self.physicsBody?.categoryBitMask = PhysicsCategory.Boards
 		self.physicsBody?.contactTestBitMask = PhysicsCategory.Ball | PhysicsCategory.Car
 		
+		// Controls
 		
+		// joystick
+		joyStick = Joystick()
+		//joyStick.position = CGPoint(x: screenSize.width/4.0, y: screenSize.height/3.0)
+		//self.addChild(joyStick)
+
 		// Field
 		let Field = SKSpriteNode(color: SKColor.green, size: CGSize(width: frame.size.width, height: frame.size.height))
 		Field.position = CGPoint(x: frame.midX, y: frame.midY)
@@ -42,7 +54,6 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		car1 = Car(spawnPosition: carSpawnSpot)
 		addChild(car1)
 		
-		
 		// Add ball
 		let ballSpawnSpot = CGPoint(x: frame.midX*1.5, y: frame.midY)
 		let ball = Ball(spawnPosition: ballSpawnSpot)
@@ -50,10 +61,30 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		
     }
 	
+	
 	// MARK: - Touch Handling
+	
+
+	
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
        /* Called when a touch begins */
-		/* Test code splits up screen to act as controls */
+		
+		
+		for Touch in touches {
+			let touch = Touch.location(in: self)
+			if touch.x < frame.midX { // touch on left side of screen
+				
+				if (self.childNode(withName: "joystick") == nil) {
+					joyStick.position = touch
+					self.addChild(joyStick)
+				}
+				joyStick.steerTowards(position: touch)
+			}
+		}
+		
+		
+		/*
+		// Test code splits up screen to act as controls
 		for Touch in touches {
 			if Touch.location(in: self).x < frame.midX { // touch on left side of screen
 				if Touch.location(in: self).x < frame.midX/2.0 { // touch on left quarter of screen // turn left
@@ -67,9 +98,24 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 				car1.accelerate = true
 			}
 		}
+		*/
 	}
 	
 	override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+		for Touch in touches {
+			let touch = Touch.location(in: self)
+			if touch.x < frame.midX { // touch on left side of screen
+				
+				if (self.childNode(withName: "joystick") == nil) {
+					joyStick.position = touch
+					self.addChild(joyStick)
+				}
+				joyStick.steerTowards(position: touch)
+			}
+		}
+		
+		
+		/*
 		var accelerating = 0
 		var turnRight = 0x0
 		var turnLeft = 0x0
@@ -103,10 +149,17 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		} else {
 			car1.accelerate = false
 		}
-		
+		*/
 	}
 	
 	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+		for Touch in touches {
+			let touch = Touch.location(in: self)
+			if touch.x < frame.midX { // touch on left side of screen
+				joyStick.removeFromParent()
+			}
+		}
+		/*
 		for Touch in touches {
 			if Touch.location(in: self).x < frame.midX { // touch on left side of screen
     			if Touch.location(in: self).x < frame.midX/2.0 { // touch on left quarter of screen
@@ -118,7 +171,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 				car1.accelerate = false
     		}
     	}
-		
+		*/
 	}
 	
 	// MARK: - Frame Cycle
