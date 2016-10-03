@@ -18,6 +18,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 	var touchingJoystick: Bool = false
 	var joyStickCenter: CGVector!
 	var joyStick: Joystick!
+	var throttle: Throttle!
 	
 	
     override func didMove(to view: SKView) {
@@ -30,12 +31,12 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		physicsWorld.contactDelegate = self
 		
 		// Create boundary for field
-		//let FieldBoundary = CGRect(x: 0, y: 0, width: screenRect.width, height: screenRect.height)
-		let boundaryBody = SKPhysicsBody(edgeLoopFrom: self.frame)
-		//let boundaryBody = SKPhysicsBody(edgeLoopFromRect: screenRect)
-		self.physicsBody = boundaryBody
-		self.physicsBody?.categoryBitMask = PhysicsCategory.Boards
-		self.physicsBody?.contactTestBitMask = PhysicsCategory.Ball | PhysicsCategory.Car
+		// let FieldBoundary = CGRect(x: 0, y: 0, width: screenRect.width, height: screenRect.height)
+		//let boundaryBody = SKPhysicsBody(edgeLoopFrom: self.frame)
+		//self.physicsBody = boundaryBody
+		//self.physicsBody?.categoryBitMask = PhysicsCategory.Boards
+		//self.physicsBody?.contactTestBitMask = PhysicsCategory.Ball
+		
 		
 		// Controls
 		
@@ -43,21 +44,27 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		joyStick = Joystick()
 		//joyStick.position = CGPoint(x: screenSize.width/4.0, y: screenSize.height/3.0)
 		//self.addChild(joyStick)
-
+		
+		// Throttle
+		throttle = Throttle()
+		throttle.position = CGPoint(x: frame.midX * 1.75, y: frame.midY/2.0)
+		throttle.zPosition += 1
+		self.addChild(throttle)
+		
 		// Field
 		let Field = SKSpriteNode(color: SKColor.green, size: CGSize(width: frame.size.width, height: frame.size.height))
 		Field.position = CGPoint(x: frame.midX, y: frame.midY)
 		addChild(Field)
 		
 		// Add a car
-		let carSpawnSpot = CGPoint(x: frame.midX, y: frame.midY)
+		let carSpawnSpot = CGPoint(x: 50, y: frame.midY)
 		car1 = Car(spawnPosition: carSpawnSpot)
 		addChild(car1)
 		
 		// Add ball
 		let ballSpawnSpot = CGPoint(x: frame.midX*1.5, y: frame.midY)
 		let ball = Ball(spawnPosition: ballSpawnSpot)
-		addChild(ball)
+		// addChild(ball)
 		
     }
 	
@@ -69,110 +76,74 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
        /* Called when a touch begins */
 		
-		
+		var steering = 0
 		for Touch in touches {
 			let touch = Touch.location(in: self)
-			if touch.x < frame.midX { // touch on left side of screen
-				
+			let testNode = self.atPoint(touch) as? SKSpriteNode
+			if (testNode?.name == "throttlebase" || testNode?.name == "throttle") {
+				throttle.moveTo(position: touch.y)
+			} else { // Create joystick
 				if (self.childNode(withName: "joystick") == nil) {
 					joyStick.position = touch
 					self.addChild(joyStick)
 				}
 				joyStick.steerTowards(position: touch)
+				steering += 1
 			}
+			
 		}
 		
-		
-		/*
-		// Test code splits up screen to act as controls
-		for Touch in touches {
-			if Touch.location(in: self).x < frame.midX { // touch on left side of screen
-				if Touch.location(in: self).x < frame.midX/2.0 { // touch on left quarter of screen // turn left
-					car1.steerLeft = true
-					car1.steerRight = false
-				} else { // Touch on 2nd quarter of screen // turn right
-					car1.steerRight = true
-					car1.steerLeft = false
-				}
-			} else { // Touch on right half of screen
-				car1.accelerate = true
-			}
+		if steering > 0 {
+			car1.steering = true
 		}
-		*/
 	}
 	
 	override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+		var steering = 0
 		for Touch in touches {
 			let touch = Touch.location(in: self)
-			if touch.x < frame.midX { // touch on left side of screen
+			let testNode = self.atPoint(touch) as? SKSpriteNode
+			if (testNode?.name == "throttlebase" || testNode?.name == "throttle") {
+				throttle.moveTo(position: touch.y)
+			} else {
 				
 				if (self.childNode(withName: "joystick") == nil) {
 					joyStick.position = touch
 					self.addChild(joyStick)
 				}
-				joyStick.steerTowards(position: touch)
+				
+				// This prevents unexpected behaviour when throttle thumb leaves throttle area
+				if hypot(touch.x - joyStick.position.x, touch.y - joyStick.position.y) < (joyStick.leverLeash * 12.0) {
+					joyStick.steerTowards(position: touch)
+				}
+				
+				steering += 1
 			}
 		}
 		
-		
-		/*
-		var accelerating = 0
-		var turnRight = 0x0
-		var turnLeft = 0x0
-		for Touch in touches {
-			if Touch.location(in: self).x < frame.midX { // touch on left side of screen
-    			if Touch.location(in: self).x < frame.midX/2.0 { // touch on left quarter of screen
-					turnLeft |= 0x1
-    			} else { // Touch on 2nd quarter of screen
-					turnRight |= 0x1
-    			}
-    		} else { // Touch on right half of screen
-				accelerating += 1
-    		}
-    	}
-		
-		if (turnLeft ^ turnRight == 0x1) { // If turnLeft and turnRight are different
-			if (turnRight == 0) {
-    			car1.steerLeft = true
-    			car1.steerRight = false
-    		} else if (turnLeft == 0) {
-    			car1.steerRight = true
-    			car1.steerLeft = false
-    		}
-		} else {
-			car1.steerLeft = false
-			car1.steerRight = false
+			
+		if steering > 0 {
+			car1.steering = true
 		}
-		
-		if accelerating > 0 {
-			car1.accelerate = true
-		} else {
-			car1.accelerate = false
-		}
-		*/
-	}
 	
+	}
+
 	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
 		for Touch in touches {
 			let touch = Touch.location(in: self)
-			if touch.x < frame.midX { // touch on left side of screen
-				joyStick.removeFromParent()
+			let testNode = self.atPoint(touch) as? SKSpriteNode
+			if !(testNode?.name == "throttlebase" || testNode?.name == "throttle") {
+				if (self.childNode(withName: "joystick") != nil) {
+					self.joyStick.removeFromParent()
+					car1.steering = false
+				}
 			}
+
 		}
-		/*
-		for Touch in touches {
-			if Touch.location(in: self).x < frame.midX { // touch on left side of screen
-    			if Touch.location(in: self).x < frame.midX/2.0 { // touch on left quarter of screen
-    				car1.steerLeft = false
-    			} else { // Touch on 2nd quarter of screen
-    				car1.steerRight = false
-    			}
-    		} else { // Touch on right half of screen
-				car1.accelerate = false
-    		}
-    	}
-		*/
+		
 	}
+	
+	
 	
 	// MARK: - Frame Cycle
     override func update(_ currentTime: TimeInterval) {
@@ -182,44 +153,98 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		// enumerateChildNodesWithName() function. Essentially a block is a function.
 		// What I'm doing here is declaring a function that has parameter types SKNode!
 		// and UnsafeMutablePointer<ObjCBool> and return type void. Then I'm setting that
-		// equal to an actual function with with specific parameter names. Idk it just works lol
-		// Pretty sure this is like a 1 to 1 translation to a C function pointer.
+		// equal to an actual function with with specific parameter names. Idrk how it works
+		// It just does lol.. pretty sure this is like a 1 to 1 translation to a C function pointer.
 		let updateNode: (SKNode?, UnsafeMutablePointer<ObjCBool>) -> Void = {
 			(node, NilLiteralConvertible) -> Void in
-			
-			// Update car rotation
-			if (self.car1.steerLeft) {
-				self.car1.physicsBody?.applyTorque(CGFloat(0.01))
-			} else if (self.car1.steerRight) {
-				self.car1.physicsBody?.applyTorque(CGFloat(-0.01))
+			let car = self.car1
+			let carVelocity = car?.physicsBody?.velocity
+			let carVelocityMag = hypot((carVelocity?.dx)!, (carVelocity?.dy)!)
+			let velocityAttenuation: CGFloat = 0.1
+			if (carVelocityMag < (car?.MAXCARSPEED)!) {
+				car?.physicsBody?.applyImpulse(CGVector(dx: CGFloat(cos((car?.zRotation)!)) * self.throttle.thrustRatio() * velocityAttenuation, dy: CGFloat(sin((car?.zRotation)!)) * self.throttle.thrustRatio() * velocityAttenuation))
 			}
+			
+			
+			//_ = self.zRotation
+			//_ = self.physicsBody?.velocity.dx
+			//_ = self.physicsBody?.velocity.dy
+			if (carVelocityMag > CGFloat(0.01)) {
+				
+				var driftDiff = self.zRotation - atan2((carVelocity?.dy)!, (carVelocity?.dx)!)
+				if driftDiff < CGFloat(-M_PI) {
+					driftDiff += CGFloat(2 * M_P I)
+				} else if driftDiff > CGFloat(M_PI) {
+					driftDiff -= CGFloat(2 * M_PI)
+				}
+				
+				let lateralMomentum = sin(driftDiff) * carVelocityMag * (car?.physicsBody?.mass)! * (0.025)
+				var normalZRotation = CGFloat(M_PI/2.0)
+				if (driftDiff < 0) {
+					normalZRotation = -normalZRotation
+				}
+				let lateralMomentumVecAngle = (car?.zRotation)! - normalZRotation
+				
+				let lateralMomentumVec = CGVector(dx: cos(lateralMomentumVecAngle) * lateralMomentum, dy: sin(lateralMomentumVecAngle) * lateralMomentum)
+				car?.physicsBody?.applyImpulse(lateralMomentumVec)
+				
+			}
+
+			
+			if (car?.steering)! {
+				car?.steerTowards(direction: self.joyStick.steeringAngle)
+			}
+			
+			// Mirror boundaries
+			if (car?.position.x)! > (self.frame.width + (car?.diagonalLength)!/2.0) {
+				car?.position.x = 0
+			} else if (car?.position.x)! < (0 - (car?.diagonalLength)!/2.0) {
+				car?.position.x = self.frame.width
+			}
+			if (car?.position.y)! > (self.frame.height + (car?.diagonalLength)!/2.0) {
+				car?.position.y = 0
+			} else if (car?.position.y)! < (0 - (car?.diagonalLength)!/2.0) {
+				car?.position.y = self.frame.height
+			}
+			
 			/*
 			var sl = "is not"
 			var sr = "is not"
 			var a = "is not"
-			if (self.car1.steerLeft) {
+			if (car?.steerLeft) {
 				sl = "is"
 			}
-			if (self.car1.steerRight) {
+			if (car?.steerRight) {
 				sr = "is"
 			}
-			if (self.car1.accelerate) {
+			if (car?.accelerate) {
 				a = "is"
 			}
 			print("car \(sr) steering right, and \(sl) steering left, and \(a) accelerating")
 */
 			
-			//car.physicsBody?.velocity = CGVectorMake(CGFloat(cos(self.car1.zRotation)) * car.speed, CGFloat(sin(self.car1.zRotation)) * car.speed)
+			//car.physicsBody?.velocity = CGVectorMake(CGFloat(cos(car?.zRotation)) * car.speed, CGFloat(sin(car?.zRotation)) * car.speed)
 			//var carVelocity = sqrt(int(car.physicsBody?.velocity.dx << 1) + int(car.physicsBody?.velocity.dy << 1))
-			let carVelocity = sqrtf(pow(Float((self.car1.physicsBody?.velocity.dx)!), 2) + pow(Float((self.car1.physicsBody?.velocity.dx)!),2))
+			//let carVelocity = sqrtf(pow(Float((carVelocity.dx)!), 2) + pow(Float((carVelocity.dx)!),2))
 			
-			if (self.car1.accelerate) {
-    			if (carVelocity < 120) {
-        			self.car1.physicsBody?.applyImpulse(CGVector(dx: CGFloat(cos(self.car1.zRotation)) * self.car1.speed, dy: CGFloat(sin(self.car1.zRotation)) * self.car1.speed))
-    			}
-    		}
+			
+			
+
+			/*
+			// Update car rotation
+			if (car?.steering) {
+				car1.steerTowards(angle: angle)
+				car?.physicsBody?.applyTorque(car?.steeringTorque)
+				
+			}
+*/
 		}
+
 		
+		
+		
+			
+			
 		self.enumerateChildNodes(withName: "car", using: updateNode)
 		
     }

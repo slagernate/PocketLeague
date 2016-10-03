@@ -10,10 +10,9 @@ import SpriteKit
 
 class Car: PhysicalObject {
 
-    let MAXCARSPEED :CGFloat = 0.5
-	var accelerate: Bool
-	var steerRight: Bool
-	var steerLeft: Bool
+    let MAXCARSPEED: CGFloat = 120
+	var steering: Bool
+	var diagonalLength: CGFloat
 	
 	init(spawnPosition: CGPoint) {
 		
@@ -24,9 +23,11 @@ class Car: PhysicalObject {
 		let carSize = CGSize(width: (carWidth*carScale), height: carWidth)
 		
 		// Initialize movement variables
-    	self.accelerate = false
-    	self.steerRight = false
-    	self.steerLeft = false
+		self.steering = false
+		self.diagonalLength = hypot(carSize.width, carSize.height)
+		
+		//self.steerRight = false
+		//self.steerLeft = false
 		
 		super.init(texture: carTexture, color: UIColor.clear, size: carSize)
 		
@@ -39,18 +40,47 @@ class Car: PhysicalObject {
 		//self.physicsBody = SKPhysicsBody(edgeLoopFromRect: CGRect(origin: spawnPosition, size: carSize) )
 		let carPhysicsSize = CGSize(width: self.size.width, height: self.size.height)
 		self.physicsBody = SKPhysicsBody(rectangleOf: carPhysicsSize)
-		self.objectMass = CGFloat(20)
+		self.objectMass = CGFloat(2)
 		self.physicsBody?.friction = 0.5
 		self.physicsBody?.angularDamping = 1.0
 		self.physicsBody?.linearDamping = 1.0
 		self.physicsBody?.restitution = 1.0
 		physicsBody?.isDynamic = true // Default is true
-
+		
 		
 		self.physicsBody?.categoryBitMask = PhysicsCategory.Car
-		self.physicsBody?.contactTestBitMask = PhysicsCategory.Boards | PhysicsCategory.Car | PhysicsCategory.Ball
+		self.physicsBody?.contactTestBitMask = PhysicsCategory.Car | PhysicsCategory.Ball
 		
 
+	}
+	
+	func steerTowards(direction: CGFloat)
+	{
+		
+		var requestedTorque = self.zRotation - direction
+		if requestedTorque < CGFloat(-M_PI) {
+			requestedTorque += CGFloat(2 * M_PI)
+		} else if requestedTorque > CGFloat(M_PI) {
+			requestedTorque -= CGFloat(2 * M_PI)
+		}
+		
+		print("requested torque: \(requestedTorque)")
+		let attenuatedTorque = CGFloat(0.0015) * requestedTorque
+		//let attenuatedTorque = (requestedTorque * torqueAttenuator)
+		
+		let carVelocity = hypot((self.physicsBody?.velocity.dx)!, (self.physicsBody?.velocity.dy)!)
+
+		let carVelRatio = carVelocity / self.MAXCARSPEED
+		// Steering low and high velocities should be reduced using adjustedTorqueFactor
+		// See function plotted on wolfram alpha here:
+		/* https://www.wolframalpha.com/input/?i=graph+y+%3D+1%2F(+(x%5E3)+*+(+e%5E(1%2F(x))+-+1+)+) */
+		let adjustedTorqueFactor = 1.0/(pow(carVelRatio, 3.0) * (pow(CGFloat(M_E), 1.0/(carVelRatio)) - 1.0))
+		
+		self.physicsBody?.applyTorque(-(attenuatedTorque * adjustedTorqueFactor))
+		//print("adjusted torque: \(adjustedTorqueFactor)")
+
+		
+		
 	}
 	
 	required init?(coder aDecoder: NSCoder) {

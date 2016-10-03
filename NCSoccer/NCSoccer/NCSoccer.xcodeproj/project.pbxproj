@@ -7,19 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		430B3B701D97763F002E00B2 /* joyStickBase2.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 430B3B6F1D97763F002E00B2 /* joyStickBase2.PNG */; };
 		433A0F071D8F3A5200F64CA4 /* Ball.swift in Sources */ = {isa = PBXBuildFile; fileRef = 433A0F061D8F3A5200F64CA4 /* Ball.swift */; };
-		433A0F101D8F425400F64CA4 /* ball.png in Resources */ = {isa = PBXBuildFile; fileRef = 433A0F0F1D8F425400F64CA4 /* ball.png */; };
-		4340E4301D975080004A76FC /* joyStick.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 4340E42E1D975080004A76FC /* joyStick.PNG */; };
-		4340E4311D975080004A76FC /* joyStick@2000x2000.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 4340E42F1D975080004A76FC /* joyStick@2000x2000.PNG */; };
 		43BF73791D975AAC00EFE1FB /* Joystick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43BF73781D975AAC00EFE1FB /* Joystick.swift */; };
-		43BF737B1D97632F00EFE1FB /* joyStickBase@3000x3000.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 43BF737A1D97632F00EFE1FB /* joyStickBase@3000x3000.PNG */; };
+		43D21C371DA0218C0076EE33 /* Throttle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D21C361DA0218C0076EE33 /* Throttle.swift */; };
+		43D21C441DA03D970076EE33 /* throttle_base.png in Resources */ = {isa = PBXBuildFile; fileRef = 43D21C3E1DA03D970076EE33 /* throttle_base.png */; };
+		43D21C451DA03D970076EE33 /* throttle.png in Resources */ = {isa = PBXBuildFile; fileRef = 43D21C3F1DA03D970076EE33 /* throttle.png */; };
+		43D21C471DA03E020076EE33 /* BasicCar.png in Resources */ = {isa = PBXBuildFile; fileRef = 43D21C461DA03E020076EE33 /* BasicCar.png */; };
+		43D21C491DA03F400076EE33 /* ball.png in Resources */ = {isa = PBXBuildFile; fileRef = 43D21C481DA03F400076EE33 /* ball.png */; };
+		43D21C4E1DA041FD0076EE33 /* joyStick.png in Resources */ = {isa = PBXBuildFile; fileRef = 43D21C4A1DA041FD0076EE33 /* joyStick.png */; };
+		43D21C4F1DA041FD0076EE33 /* joyStick@2000x2000.png in Resources */ = {isa = PBXBuildFile; fileRef = 43D21C4B1DA041FD0076EE33 /* joyStick@2000x2000.png */; };
+		43D21C501DA041FD0076EE33 /* joyStickBase@3000x3000.png in Resources */ = {isa = PBXBuildFile; fileRef = 43D21C4C1DA041FD0076EE33 /* joyStickBase@3000x3000.png */; };
+		43D21C511DA041FD0076EE33 /* joyStickBase2.png in Resources */ = {isa = PBXBuildFile; fileRef = 43D21C4D1DA041FD0076EE33 /* joyStickBase2.png */; };
 		43DF8DAE1D76742000F7C9C0 /* SoccerSceneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DF8DAD1D76742000F7C9C0 /* SoccerSceneViewController.swift */; };
 		43DF8DB41D77996E00F7C9C0 /* MainMenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DF8DB31D77996E00F7C9C0 /* MainMenuScene.swift */; };
 		43DF8DB71D77ABBC00F7C9C0 /* PhysicalObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DF8DB61D77ABBC00F7C9C0 /* PhysicalObject.swift */; };
 		43DF8DB91D77B0F700F7C9C0 /* PhysicsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DF8DB81D77B0F700F7C9C0 /* PhysicsHandler.swift */; };
 		43DF8DBB1D77B90A00F7C9C0 /* Car.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DF8DBA1D77B90A00F7C9C0 /* Car.swift */; };
-		43DF8DC11D77C52300F7C9C0 /* BasicCar.png in Resources */ = {isa = PBXBuildFile; fileRef = 43DF8DC01D77C52300F7C9C0 /* BasicCar.png */; };
 		43FE94E81D750E3500076646 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43FE94E71D750E3500076646 /* AppDelegate.swift */; };
 		43FE94EC1D750E3500076646 /* SoccerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43FE94EB1D750E3500076646 /* SoccerScene.swift */; };
 		43FE94F11D750E3500076646 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 43FE94EF1D750E3500076646 /* Main.storyboard */; };
@@ -28,19 +31,22 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		430B3B6F1D97763F002E00B2 /* joyStickBase2.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = joyStickBase2.PNG; sourceTree = "<group>"; };
 		433A0F061D8F3A5200F64CA4 /* Ball.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ball.swift; sourceTree = "<group>"; };
-		433A0F0F1D8F425400F64CA4 /* ball.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ball.png; sourceTree = "<group>"; };
-		4340E42E1D975080004A76FC /* joyStick.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = joyStick.PNG; sourceTree = "<group>"; };
-		4340E42F1D975080004A76FC /* joyStick@2000x2000.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "joyStick@2000x2000.PNG"; sourceTree = "<group>"; };
 		43BF73781D975AAC00EFE1FB /* Joystick.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Joystick.swift; sourceTree = "<group>"; };
-		43BF737A1D97632F00EFE1FB /* joyStickBase@3000x3000.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "joyStickBase@3000x3000.PNG"; sourceTree = "<group>"; };
+		43D21C361DA0218C0076EE33 /* Throttle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Throttle.swift; sourceTree = "<group>"; };
+		43D21C3E1DA03D970076EE33 /* throttle_base.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = throttle_base.png; path = Images/ControlButtons/throttle_base.png; sourceTree = "<group>"; };
+		43D21C3F1DA03D970076EE33 /* throttle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = throttle.png; path = Images/ControlButtons/throttle.png; sourceTree = "<group>"; };
+		43D21C461DA03E020076EE33 /* BasicCar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = BasicCar.png; path = NCSoccer/Resources/Images/Cars/BasicCar.png; sourceTree = SOURCE_ROOT; };
+		43D21C481DA03F400076EE33 /* ball.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ball.png; path = Images/Balls/ball.png; sourceTree = "<group>"; };
+		43D21C4A1DA041FD0076EE33 /* joyStick.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = joyStick.png; path = Images/ControlButtons/joyStick.png; sourceTree = "<group>"; };
+		43D21C4B1DA041FD0076EE33 /* joyStick@2000x2000.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "joyStick@2000x2000.png"; path = "Images/ControlButtons/joyStick@2000x2000.png"; sourceTree = "<group>"; };
+		43D21C4C1DA041FD0076EE33 /* joyStickBase@3000x3000.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "joyStickBase@3000x3000.png"; path = "Images/ControlButtons/joyStickBase@3000x3000.png"; sourceTree = "<group>"; };
+		43D21C4D1DA041FD0076EE33 /* joyStickBase2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = joyStickBase2.png; path = Images/ControlButtons/joyStickBase2.png; sourceTree = "<group>"; };
 		43DF8DAD1D76742000F7C9C0 /* SoccerSceneViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoccerSceneViewController.swift; sourceTree = "<group>"; };
 		43DF8DB31D77996E00F7C9C0 /* MainMenuScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenuScene.swift; sourceTree = "<group>"; };
 		43DF8DB61D77ABBC00F7C9C0 /* PhysicalObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhysicalObject.swift; sourceTree = "<group>"; };
 		43DF8DB81D77B0F700F7C9C0 /* PhysicsHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhysicsHandler.swift; sourceTree = "<group>"; };
 		43DF8DBA1D77B90A00F7C9C0 /* Car.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Car.swift; sourceTree = "<group>"; };
-		43DF8DC01D77C52300F7C9C0 /* BasicCar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BasicCar.png; sourceTree = "<group>"; };
 		43FE94E41D750E3500076646 /* NCSoccer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NCSoccer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		43FE94E71D750E3500076646 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		43FE94EB1D750E3500076646 /* SoccerScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoccerScene.swift; sourceTree = "<group>"; };
@@ -64,7 +70,7 @@
 		433A0F081D8F3C6200F64CA4 /* Balls */ = {
 			isa = PBXGroup;
 			children = (
-				433A0F0F1D8F425400F64CA4 /* ball.png */,
+				43D21C481DA03F400076EE33 /* ball.png */,
 			);
 			name = Balls;
 			sourceTree = "<group>";
@@ -82,10 +88,12 @@
 		4340E42D1D974F52004A76FC /* ControlButtons */ = {
 			isa = PBXGroup;
 			children = (
-				430B3B6F1D97763F002E00B2 /* joyStickBase2.PNG */,
-				43BF737A1D97632F00EFE1FB /* joyStickBase@3000x3000.PNG */,
-				4340E42E1D975080004A76FC /* joyStick.PNG */,
-				4340E42F1D975080004A76FC /* joyStick@2000x2000.PNG */,
+				43D21C4A1DA041FD0076EE33 /* joyStick.png */,
+				43D21C4B1DA041FD0076EE33 /* joyStick@2000x2000.png */,
+				43D21C4C1DA041FD0076EE33 /* joyStickBase@3000x3000.png */,
+				43D21C4D1DA041FD0076EE33 /* joyStickBase2.png */,
+				43D21C3E1DA03D970076EE33 /* throttle_base.png */,
+				43D21C3F1DA03D970076EE33 /* throttle.png */,
 			);
 			name = ControlButtons;
 			sourceTree = "<group>";
@@ -101,7 +109,7 @@
 		43DF8DBF1D77C52300F7C9C0 /* Cars */ = {
 			isa = PBXGroup;
 			children = (
-				43DF8DC01D77C52300F7C9C0 /* BasicCar.png */,
+				43D21C461DA03E020076EE33 /* BasicCar.png */,
 			);
 			path = Cars;
 			sourceTree = "<group>";
@@ -130,6 +138,7 @@
 				43DF8DB31D77996E00F7C9C0 /* MainMenuScene.swift */,
 				43FE94EB1D750E3500076646 /* SoccerScene.swift */,
 				43BF73781D975AAC00EFE1FB /* Joystick.swift */,
+				43D21C361DA0218C0076EE33 /* Throttle.swift */,
 				433A0F061D8F3A5200F64CA4 /* Ball.swift */,
 				43DF8DAD1D76742000F7C9C0 /* SoccerSceneViewController.swift */,
 				43DF8DB61D77ABBC00F7C9C0 /* PhysicalObject.swift */,
@@ -203,15 +212,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				430B3B701D97763F002E00B2 /* joyStickBase2.PNG in Resources */,
+				43D21C511DA041FD0076EE33 /* joyStickBase2.png in Resources */,
 				43FE94F61D750E3500076646 /* LaunchScreen.storyboard in Resources */,
-				4340E4311D975080004A76FC /* joyStick@2000x2000.PNG in Resources */,
-				4340E4301D975080004A76FC /* joyStick.PNG in Resources */,
-				433A0F101D8F425400F64CA4 /* ball.png in Resources */,
+				43D21C471DA03E020076EE33 /* BasicCar.png in Resources */,
+				43D21C491DA03F400076EE33 /* ball.png in Resources */,
 				43FE94F31D750E3500076646 /* Assets.xcassets in Resources */,
+				43D21C441DA03D970076EE33 /* throttle_base.png in Resources */,
 				43FE94F11D750E3500076646 /* Main.storyboard in Resources */,
-				43BF737B1D97632F00EFE1FB /* joyStickBase@3000x3000.PNG in Resources */,
-				43DF8DC11D77C52300F7C9C0 /* BasicCar.png in Resources */,
+				43D21C4F1DA041FD0076EE33 /* joyStick@2000x2000.png in Resources */,
+				43D21C451DA03D970076EE33 /* throttle.png in Resources */,
+				43D21C501DA041FD0076EE33 /* joyStickBase@3000x3000.png in Resources */,
+				43D21C4E1DA041FD0076EE33 /* joyStick.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,6 +236,7 @@
 				43BF73791D975AAC00EFE1FB /* Joystick.swift in Sources */,
 				433A0F071D8F3A5200F64CA4 /* Ball.swift in Sources */,
 				43FE94EC1D750E3500076646 /* SoccerScene.swift in Sources */,
+				43D21C371DA0218C0076EE33 /* Throttle.swift in Sources */,
 				43DF8DAE1D76742000F7C9C0 /* SoccerSceneViewController.swift in Sources */,
 				43DF8DB91D77B0F700F7C9C0 /* PhysicsHandler.swift in Sources */,
 				43DF8DB71D77ABBC00F7C9C0 /* PhysicalObject.swift in Sources */,
@@ -352,6 +364,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = GF6CNP58Y8;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				INFOPLIST_FILE = NCSoccer/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -368,6 +381,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = GF6CNP58Y8;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				INFOPLIST_FILE = NCSoccer/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
