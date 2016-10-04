@@ -67,7 +67,7 @@ class Joystick: SKSpriteNode {
 		}
 		
 		//print("x: \(lever.position.x), y: \(lever.position.y)")
-		print("Steering angle: \(angle)")
+		//print("Steering angle: \(angle)")
 
 		steeringAngle = angle
 	}

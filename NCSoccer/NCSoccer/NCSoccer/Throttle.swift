@@ -37,7 +37,7 @@ class Throttle: SKSpriteNode {
 		
 		// Setup
 		throttle.zPosition = self.zPosition + 2
-		throttle.position = CGPoint(x: 0, y: MAX_THROTTLE_POS)
+		throttle.position = CGPoint(x: 0, y: MIN_THROTTLE_POS)
 		self.addChild(throttle)
 
 		

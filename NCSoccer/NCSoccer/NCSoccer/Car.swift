@@ -10,7 +10,7 @@ import SpriteKit
 
 class Car: PhysicalObject {
 
-    let MAXCARSPEED: CGFloat = 120
+    let MAXCARSPEED: CGFloat = 200
 	var steering: Bool
 	var diagonalLength: CGFloat
 	
@@ -64,7 +64,7 @@ class Car: PhysicalObject {
 			requestedTorque -= CGFloat(2 * M_PI)
 		}
 		
-		print("requested torque: \(requestedTorque)")
+		//print("requested torque: \(requestedTorque)")
 		let attenuatedTorque = CGFloat(0.0015) * requestedTorque
 		//let attenuatedTorque = (requestedTorque * torqueAttenuator)
 		

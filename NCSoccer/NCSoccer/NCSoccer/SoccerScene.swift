@@ -157,55 +157,53 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		// It just does lol.. pretty sure this is like a 1 to 1 translation to a C function pointer.
 		let updateNode: (SKNode?, UnsafeMutablePointer<ObjCBool>) -> Void = {
 			(node, NilLiteralConvertible) -> Void in
-			let car = self.car1
-			let carVelocity = car?.physicsBody?.velocity
-			let carVelocityMag = hypot((carVelocity?.dx)!, (carVelocity?.dy)!)
-			let velocityAttenuation: CGFloat = 0.1
-			if (carVelocityMag < (car?.MAXCARSPEED)!) {
-				car?.physicsBody?.applyImpulse(CGVector(dx: CGFloat(cos((car?.zRotation)!)) * self.throttle.thrustRatio() * velocityAttenuation, dy: CGFloat(sin((car?.zRotation)!)) * self.throttle.thrustRatio() * velocityAttenuation))
-			}
-			
-			
-			//_ = self.zRotation
-			//_ = self.physicsBody?.velocity.dx
-			//_ = self.physicsBody?.velocity.dy
-			if (carVelocityMag > CGFloat(0.01)) {
-				
-				var driftDiff = self.zRotation - atan2((carVelocity?.dy)!, (carVelocity?.dx)!)
-				if driftDiff < CGFloat(-M_PI) {
-					driftDiff += CGFloat(2 * M_P I)
-				} else if driftDiff > CGFloat(M_PI) {
-					driftDiff -= CGFloat(2 * M_PI)
+			if let car = self.car1 {
+				let carVelocity = car.physicsBody?.velocity
+				let carVelocityMag = hypot((carVelocity?.dx)!, (carVelocity?.dy)!)
+				let velocityAttenuation: CGFloat = 0.1
+				if (carVelocityMag < (car.MAXCARSPEED)) {
+					car.physicsBody?.applyImpulse(
+						CGVector(dx: CGFloat(cos(car.zRotation)) * self.throttle.thrustRatio() * velocityAttenuation,
+						         dy: CGFloat(sin(car.zRotation)) * self.throttle.thrustRatio() * velocityAttenuation))
+					
 				}
 				
-				let lateralMomentum = sin(driftDiff) * carVelocityMag * (car?.physicsBody?.mass)! * (0.025)
-				var normalZRotation = CGFloat(M_PI/2.0)
-				if (driftDiff < 0) {
-					normalZRotation = -normalZRotation
-				}
-				let lateralMomentumVecAngle = (car?.zRotation)! - normalZRotation
 				
-				let lateralMomentumVec = CGVector(dx: cos(lateralMomentumVecAngle) * lateralMomentum, dy: sin(lateralMomentumVecAngle) * lateralMomentum)
-				car?.physicsBody?.applyImpulse(lateralMomentumVec)
+
+				// Don't
 				
-			}
+				
+				let driftDiff = atan2((carVelocity?.dy)!, (carVelocity?.dx)!) - (car.zRotation)
+
+				let lateralMomentum = sin(driftDiff) * carVelocityMag * (car.physicsBody?.mass)!
+				
+				let normalZRotation = CGFloat(M_PI/2.0)
+
+				let lateralMomentumVecAngle = (car.zRotation) - normalZRotation
+				
+				let lateralMomentumVec = CGVector(dx: cos(lateralMomentumVecAngle) * lateralMomentum,
+												  dy: sin(lateralMomentumVecAngle) * lateralMomentum)
+				car.physicsBody?.applyImpulse(lateralMomentumVec)
+				
+				
+			
 
 			
-			if (car?.steering)! {
-				car?.steerTowards(direction: self.joyStick.steeringAngle)
-			}
-			
-			// Mirror boundaries
-			if (car?.position.x)! > (self.frame.width + (car?.diagonalLength)!/2.0) {
-				car?.position.x = 0
-			} else if (car?.position.x)! < (0 - (car?.diagonalLength)!/2.0) {
-				car?.position.x = self.frame.width
-			}
-			if (car?.position.y)! > (self.frame.height + (car?.diagonalLength)!/2.0) {
-				car?.position.y = 0
-			} else if (car?.position.y)! < (0 - (car?.diagonalLength)!/2.0) {
-				car?.position.y = self.frame.height
-			}
+				if (car.steering) {
+					car.steerTowards(direction: self.joyStick.steeringAngle)
+				}
+				
+				// Mirror boundaries
+				if car.position.x > (self.frame.width + car.diagonalLength/2.0) {
+					car.position.x = 0
+				} else if car.position.x < (0 - car.diagonalLength/2.0) {
+					car.position.x = self.frame.width
+				}
+				if car.position.y > (self.frame.height + car.diagonalLength/2.0) {
+					car.position.y = 0
+				} else if car.position.y < (0 - car.diagonalLength/2.0) {
+					car.position.y = self.frame.height
+				}
 			
 			/*
 			var sl = "is not"
@@ -237,7 +235,9 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 				car?.physicsBody?.applyTorque(car?.steeringTorque)
 				
 			}
+				
 */
+			}
 		}
 
 		
