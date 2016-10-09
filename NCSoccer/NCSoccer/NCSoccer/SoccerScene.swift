@@ -31,7 +31,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		physicsWorld.contactDelegate = self
 		
 		// Create boundary for field
-		// let FieldBoundary = CGRect(x: 0, y: 0, width: screenRect.width, height: screenRect.height)
+		//let FieldBoundary = CGRect(x: 0, y: 0, width: screenRect.width, height: screenRect.height)
 		//let boundaryBody = SKPhysicsBody(edgeLoopFrom: self.frame)
 		//self.physicsBody = boundaryBody
 		//self.physicsBody?.categoryBitMask = PhysicsCategory.Boards
@@ -42,8 +42,8 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		
 		// joystick
 		joyStick = Joystick()
-		//joyStick.position = CGPoint(x: screenSize.width/4.0, y: screenSize.height/3.0)
-		//self.addChild(joyStick)
+		joyStick.position = CGPoint(x: screenSize.width/5.0, y: screenSize.height/4.0)
+		self.addChild(joyStick)
 		
 		// Throttle
 		throttle = Throttle()
@@ -52,9 +52,9 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		self.addChild(throttle)
 		
 		// Field
-		let Field = SKSpriteNode(color: SKColor.green, size: CGSize(width: frame.size.width, height: frame.size.height))
-		Field.position = CGPoint(x: frame.midX, y: frame.midY)
-		addChild(Field)
+		//let Field = SKSpriteNode(color: SKColor.green, size: CGSize(width: frame.size.width, height: frame.size.height))
+		//Field.position = CGPoint(x: frame.midX, y: frame.midY)
+		//addChild(Field)
 		
 		// Add a car
 		let carSpawnSpot = CGPoint(x: 50, y: frame.midY)
@@ -64,7 +64,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		// Add ball
 		let ballSpawnSpot = CGPoint(x: frame.midX*1.5, y: frame.midY)
 		let ball = Ball(spawnPosition: ballSpawnSpot)
-		// addChild(ball)
+		addChild(ball)
 		
     }
 	
@@ -160,7 +160,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 			if let car = self.car1 {
 				let carVelocity = car.physicsBody?.velocity
 				let carVelocityMag = hypot((carVelocity?.dx)!, (carVelocity?.dy)!)
-				let velocityAttenuation: CGFloat = 0.1
+				let velocityAttenuation: CGFloat = 0.5
 				if (carVelocityMag < (car.MAXCARSPEED)) {
 					car.physicsBody?.applyImpulse(
 						CGVector(dx: CGFloat(cos(car.zRotation)) * self.throttle.thrustRatio() * velocityAttenuation,
@@ -170,12 +170,11 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 				
 				
 
-				// Don't
-				
+				// Converts spaceship movement to car movement by offsetting lateral velocity
 				
 				let driftDiff = atan2((carVelocity?.dy)!, (carVelocity?.dx)!) - (car.zRotation)
 
-				let lateralMomentum = sin(driftDiff) * carVelocityMag * (car.physicsBody?.mass)!
+				let lateralMomentum = sin(driftDiff) * carVelocityMag * (car.physicsBody?.mass)! * CGFloat(1.1)
 				
 				let normalZRotation = CGFloat(M_PI/2.0)
 
@@ -188,7 +187,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 				
 			
 
-			
+				// Portal walls
 				if (car.steering) {
 					car.steerTowards(direction: self.joyStick.steeringAngle)
 				}
