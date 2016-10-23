@@ -42,7 +42,7 @@ class Throttle: SKSpriteNode {
 		
 		// Setup
 		throttle.zPosition = self.zPosition + 2
-		throttle.position = CGPoint(x: 0, y: MIN_THROTTLE_POS)
+		throttle.position = CGPoint(x: 0, y: (MAX_THROTTLE_POS - MIN_THROTTLE_POS)/2.0)
 		self.addChild(throttle)
 
 		
@@ -69,7 +69,9 @@ class Throttle: SKSpriteNode {
 	func thrustRatio() -> CGFloat {
 		// Return a ratio of throttle thrust to max throttle thrust
 		// Note: Subtracted MIN_THROTTLE_POS to keep the ratio positive (MIN_THROTTLE_POS is negative)
-		return (throttle.position.y - MIN_THROTTLE_POS) / (MAX_THROTTLE_POS - MIN_THROTTLE_POS)
+		var throttleRatio = (throttle.position.y - MIN_THROTTLE_POS) / (MAX_THROTTLE_POS - MIN_THROTTLE_POS)
+		throttleRatio = (throttleRatio - 0.5) * 2.0
+		return throttleRatio
 	}
 	
 	
