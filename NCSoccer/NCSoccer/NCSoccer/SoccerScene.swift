@@ -13,6 +13,7 @@ import SpriteKit
 class SoccerScene: SKScene, SKPhysicsContactDelegate {
 	
 	var car1: Car!
+	//var ball: Ball!
 	
 	// Controls
 	var touchingJoystick: Bool = false
@@ -20,6 +21,9 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 	var joyStick: Joystick!
 	var throttle: Throttle!
 	
+	var cam: SKCameraNode!
+	var innerCamPadding: CGFloat!
+	var outerCamPadding: CGFloat!
 	
     override func didMove(to view: SKView) {
 		
@@ -38,23 +42,15 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		//self.physicsBody?.contactTestBitMask = PhysicsCategory.Ball
 		
 		
-		// Controls
-		
-		// joystick
-		joyStick = Joystick()
-		joyStick.position = CGPoint(x: screenSize.width/5.0, y: screenSize.height/4.0)
-		self.addChild(joyStick)
-		
-		// Throttle
-		throttle = Throttle()
-		throttle.position = CGPoint(x: frame.midX * 1.75, y: frame.midY/2.0)
-		throttle.zPosition += 1
-		self.addChild(throttle)
-		
 		// Field
-		//let Field = SKSpriteNode(color: SKColor.green, size: CGSize(width: frame.size.width, height: frame.size.height))
-		//Field.position = CGPoint(x: frame.midX, y: frame.midY)
-		//addChild(Field)
+		let Field = SKSpriteNode(color: SKColor.green, size: CGSize(width: frame.size.width, height: frame.size.height))
+		Field.position = CGPoint(x: frame.midX, y: frame.midY)
+		addChild(Field)
+		
+		// Corner
+		
+		//let corner = SKSpriteNode(
+		
 		
 		// Add a car
 		let carSpawnSpot = CGPoint(x: 50, y: frame.midY)
@@ -65,8 +61,33 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		let ballSpawnSpot = CGPoint(x: frame.midX*1.5, y: frame.midY)
 		let ball = Ball(spawnPosition: ballSpawnSpot)
 		addChild(ball)
+
+		// Camera
+		cam = SKCameraNode()
+		cam.setScale(CAM_SCALE)
+		self.camera = cam
+		self.addChild(cam)
 		
-    }
+		cam.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
+		
+		//// Cam children nodes
+		// Note: cam node origin is at center of screen, e.g. (0, 0)
+		
+		// Controls
+		
+		// joystick
+		joyStick = Joystick()
+		joyStick.position = CGPoint(x: -frame.midX/2.0, y: -frame.midY/2.0)
+		cam.addChild(joyStick)
+		
+		// Throttle
+		throttle = Throttle()
+		throttle.position = CGPoint(x: frame.midX*(3/4), y: -frame.midY/2.0)
+		throttle.zPosition += 1
+		cam.addChild(throttle)
+		
+		
+	} // DidMoveTo
 	
 	
 	// MARK: - Touch Handling
@@ -74,18 +95,18 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 
 	
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-       /* Called when a touch begins */
+        /* Called when a touch begins */
 		
 		var steering = 0
 		for Touch in touches {
-			let touch = Touch.location(in: self)
-			let testNode = self.atPoint(touch) as? SKSpriteNode
+			let touch = Touch.location(in: self.cam) // Touches registered relative to camera i.e. center of screen is (0, 0)
+			let testNode = self.cam.atPoint(touch) as? SKSpriteNode
 			if (testNode?.name == "throttlebase" || testNode?.name == "throttle") {
-				throttle.moveTo(position: touch.y)
+				//throttle.moveTo(position: touch.y)
 			} else { // Create joystick
-				if (self.childNode(withName: "joystick") == nil) {
+				if (self.cam.childNode(withName: "joystick") == nil) {
 					joyStick.position = touch
-					self.addChild(joyStick)
+					self.cam.addChild(joyStick)
 				}
 				joyStick.steerTowards(position: touch)
 				steering += 1
@@ -101,15 +122,16 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 	override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
 		var steering = 0
 		for Touch in touches {
-			let touch = Touch.location(in: self)
-			let testNode = self.atPoint(touch) as? SKSpriteNode
+			let touch = Touch.location(in: self.cam)
+			
+			let testNode = self.cam.atPoint(touch) as? SKSpriteNode
 			if (testNode?.name == "throttlebase" || testNode?.name == "throttle") {
 				throttle.moveTo(position: touch.y)
 			} else {
 				
-				if (self.childNode(withName: "joystick") == nil) {
+				if (self.cam.childNode(withName: "joystick") == nil) {
 					joyStick.position = touch
-					self.addChild(joyStick)
+					self.cam.addChild(joyStick)
 				}
 				
 				// This prevents unexpected behaviour when throttle thumb leaves throttle area
@@ -125,20 +147,18 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		if steering > 0 {
 			car1.steering = true
 		}
-	
 	}
-
+	
 	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
 		for Touch in touches {
-			let touch = Touch.location(in: self)
-			let testNode = self.atPoint(touch) as? SKSpriteNode
+			let touch = Touch.location(in: self.cam)
+			let testNode = self.cam.atPoint(touch) as? SKSpriteNode
 			if !(testNode?.name == "throttlebase" || testNode?.name == "throttle") {
-				if (self.childNode(withName: "joystick") != nil) {
+				if (self.cam.childNode(withName: "joystick") != nil) {
 					self.joyStick.removeFromParent()
 					car1.steering = false
 				}
 			}
-
 		}
 		
 	}
@@ -155,7 +175,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		// and UnsafeMutablePointer<ObjCBool> and return type void. Then I'm setting that
 		// equal to an actual function with with specific parameter names. Idrk how it works
 		// It just does lol.. pretty sure this is like a 1 to 1 translation to a C function pointer.
-		let updateNode: (SKNode?, UnsafeMutablePointer<ObjCBool>) -> Void = {
+		let updateCar: (SKNode?, UnsafeMutablePointer<ObjCBool>) -> Void = {
 			(node, NilLiteralConvertible) -> Void in
 			if let car = self.car1 {
 				let carVelocity = car.physicsBody?.velocity
@@ -169,7 +189,6 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 				}
 				
 				
-
 				// Converts spaceship movement to car movement by offsetting lateral velocity
 				
 				let driftDiff = atan2((carVelocity?.dy)!, (carVelocity?.dx)!) - (car.zRotation)
@@ -185,14 +204,13 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 				car.physicsBody?.applyImpulse(lateralMomentumVec)
 				
 				
-			
-
-				// Portal walls
+				
 				if (car.steering) {
 					car.steerTowards(direction: self.joyStick.steeringAngle)
 				}
 				
 				// Mirror boundaries
+				/*
 				if car.position.x > (self.frame.width + car.diagonalLength/2.0) {
 					car.position.x = 0
 				} else if car.position.x < (0 - car.diagonalLength/2.0) {
@@ -203,49 +221,141 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 				} else if car.position.y < (0 - car.diagonalLength/2.0) {
 					car.position.y = self.frame.height
 				}
-			
-			/*
-			var sl = "is not"
-			var sr = "is not"
-			var a = "is not"
-			if (car?.steerLeft) {
-				sl = "is"
-			}
-			if (car?.steerRight) {
-				sr = "is"
-			}
-			if (car?.accelerate) {
-				a = "is"
-			}
-			print("car \(sr) steering right, and \(sl) steering left, and \(a) accelerating")
 */
 			
-			//car.physicsBody?.velocity = CGVectorMake(CGFloat(cos(car?.zRotation)) * car.speed, CGFloat(sin(car?.zRotation)) * car.speed)
-			//var carVelocity = sqrt(int(car.physicsBody?.velocity.dx << 1) + int(car.physicsBody?.velocity.dy << 1))
-			//let carVelocity = sqrtf(pow(Float((carVelocity.dx)!), 2) + pow(Float((carVelocity.dx)!),2))
-			
-			
-			
+				}
+		}
+		self.enumerateChildNodes(withName: "car", using: updateCar)
 
-			/*
-			// Update car rotation
-			if (car?.steering) {
-				car1.steerTowards(angle: angle)
-				car?.physicsBody?.applyTorque(car?.steeringTorque)
-				
-			}
-				
-*/
+    }
+	
+	override func didFinishUpdate() {
+		/* Last method called before scene is rendered */
+		
+		
+		//// Check if objects are inside camera node
+
+		// Set camera zoom padding
+		innerCamPadding = (screenSize.height/2.0) * CAM_SCALE
+		outerCamPadding = (screenSize.height/8.0) * CAM_SCALE
+
+		// Create inner and outer paddings to cushion camera movement
+		let cameraWidth = screenSize.width * CAM_SCALE
+		let cameraHeight = screenSize.height * CAM_SCALE
+
+		// Create an inner outer rectangles which are slightly smaller than the camera's size
+		
+		// Adjust for different coordinate systems between camera and soccerscene by subtracting camera(Width|Height)/2.0
+		// Add (inner|outer)CamPadding to position cushion frame position
+		// Let me know if you want a visual for what's happening here!
+		let innerCamOrigin = CGPoint(x: cam.position.x - cameraWidth/2.0 + innerCamPadding/2.0, y: cam.position.y - cameraHeight/2.0 + innerCamPadding)
+		let innerCushionRect = CGRect(
+				origin: innerCamOrigin,
+				size: CGSize(width: cameraWidth - innerCamPadding, height: cameraHeight - innerCamPadding))
+		
+		let outerCamOrigin = CGPoint(x: cam.position.x - cameraWidth/2.0 + outerCamPadding/2.0, y: cam.position.y - cameraHeight/2.0 + outerCamPadding/2.0)
+		let outerCushionRect = CGRect(
+			origin: outerCamOrigin,
+			size: CGSize(width: cameraWidth - outerCamPadding, height: cameraHeight - outerCamPadding))
+		
+		
+		var objectsOutsideInnerRect = 0
+		let countObjectsOutsideInnerRect: (SKNode?, UnsafeMutablePointer<ObjCBool>) -> Void = {
+			(node, NilLiteralConvertible) -> Void in
+			if !(node?.frame.intersects(innerCushionRect))! {
+				objectsOutsideInnerRect += 1
 			}
 		}
+		
+		var objectsOutsideOuterRect = 0
+		let countObjectsOutsideOuterRect: (SKNode?, UnsafeMutablePointer<ObjCBool>) -> Void = {
+			(node, NilLiteralConvertible) -> Void in
+			if !(node?.frame.intersects(outerCushionRect))! {
+				objectsOutsideOuterRect += 1
+			}
+		}
+		
+		// The withName parameter here is using regex. Google regex if you're unfamiliar.
+		self.enumerateChildNodes(withName: "(^car$|^ball$)", using: countObjectsOutsideOuterRect)
+		if (objectsOutsideOuterRect > 0) {
+			CAM_SCALE *= CAM_ZOOM_FACTOR // Zoom out
+		} else {
+			self.enumerateChildNodes(withName: "(^car$|^ball$)", using: countObjectsOutsideInnerRect)
+			if (objectsOutsideInnerRect == 0) {
+				CAM_SCALE /= CAM_ZOOM_FACTOR // Zoom in
+			}
+		}
+		
+		if (CAM_SCALE < 1.0) {CAM_SCALE = 1.0}
+		if (CAM_SCALE > 4.0) {CAM_SCALE = 4.0}
+		cam.setScale(CAM_SCALE)
 
+
+		/*
+		//// See http://imgur.com/7G2W3nu for what "outside|within|inside padding frame" means
+		let padding = self.camPadding!
+		let paddingMargin = padding/2.0
 		
+		var objectsOutsidePaddingFrame = 0
+		let countObjectsOutsideFrame: (SKNode?, UnsafeMutablePointer<ObjCBool>) -> Void = {
+			(node, NilLiteralConvertible) -> Void in
+			let pos = node?.position
+			if let x = node?.position.x {
+				if let y = node?.position.y {
+					// Cam object outside padding frame
+					if (x < (padding - paddingMargin) ||
+						x > (screenSize.width - (padding - paddingMargin)) ||
+						y < (padding - paddingMargin) ||
+						y > (screenSize.height - (padding - paddingMargin)))
+					{
+						objectsOutsidePaddingFrame += 1
+					}
+				}
+			}
+		}
 		
+		var objectsWithinPaddingFrame = 0
+		let countObjectsWithinFrame: (SKNode?, UnsafeMutablePointer<ObjCBool>) -> Void = {
+			(node, NilLiteralConvertible) -> Void in
+			if let x = node?.position.x {
+				if let y = node?.position.y {
+					// Cam object within padding frame (not inside, not outside)
+					if (x < (padding + paddingMargin) ||
+						x > (screenSize.width - (padding + paddingMargin)) ||
+						y < (padding + paddingMargin) ||
+						y > (screenSize.height - (padding + paddingMargin)))
+					{
+						objectsWithinPaddingFrame += 1
+					}
+				}
+			}
+		}
 		
-			
-			
-		self.enumerateChildNodes(withName: "car", using: updateNode)
+		self.enumerateChildNodes(withName: "(^car$|^ball$)", using: countObjectsOutsideFrame)
+		if (objectsOutsidePaddingFrame > 0) {
+			CAM_SCALE *= CAM_ZOOM_FACTOR // Zoom out
+		} else {
+			self.enumerateChildNodes(withName: "(^car$|^ball$)", using: countObjectsWithinFrame)
+			if (0 == objectsWithinPaddingFrame) {
+				CAM_SCALE /= CAM_ZOOM_FACTOR // Zoom in
+			}
+		}
+		cam.setScale(CAM_SCALE)
+		*/
 		
-    }
+		//// Move camera to centroid of cars and ball
+		var xSum: CGFloat = 0
+		var ySum: CGFloat = 0
+		var objects: CGFloat = 0
+		let sumCamObjectPositions: (SKNode?, UnsafeMutablePointer<ObjCBool>) -> Void = {
+			(node, NilLiteralConvertible) -> Void in
+			// Sum x and y coordinates for centroid calculation
+			xSum += (node?.position.x)!
+			ySum += (node?.position.y)!
+			objects += 1
+		}
+		self.enumerateChildNodes(withName: "(^car$|^ball$)", using: sumCamObjectPositions)
+		let CAM_POS = CGPoint(x: xSum/objects, y: ySum/objects)
+		cam.position = CAM_POS
+	}
 }
-

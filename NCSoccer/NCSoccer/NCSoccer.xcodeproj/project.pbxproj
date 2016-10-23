@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		433A0F071D8F3A5200F64CA4 /* Ball.swift in Sources */ = {isa = PBXBuildFile; fileRef = 433A0F061D8F3A5200F64CA4 /* Ball.swift */; };
+		4391C8D01DBBDA0D0008FA85 /* Corner.png in Resources */ = {isa = PBXBuildFile; fileRef = 4391C8CC1DBBDA0D0008FA85 /* Corner.png */; };
+		4391C8D11DBBDA0D0008FA85 /* Corner.xcf in Resources */ = {isa = PBXBuildFile; fileRef = 4391C8CD1DBBDA0D0008FA85 /* Corner.xcf */; };
+		4391C8D21DBBDA0D0008FA85 /* Edge.png in Resources */ = {isa = PBXBuildFile; fileRef = 4391C8CE1DBBDA0D0008FA85 /* Edge.png */; };
+		4391C8D31DBBDA0D0008FA85 /* Edge.xcf in Resources */ = {isa = PBXBuildFile; fileRef = 4391C8CF1DBBDA0D0008FA85 /* Edge.xcf */; };
 		43BF73791D975AAC00EFE1FB /* Joystick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43BF73781D975AAC00EFE1FB /* Joystick.swift */; };
 		43D21C371DA0218C0076EE33 /* Throttle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D21C361DA0218C0076EE33 /* Throttle.swift */; };
 		43D21C441DA03D970076EE33 /* throttle_base.png in Resources */ = {isa = PBXBuildFile; fileRef = 43D21C3E1DA03D970076EE33 /* throttle_base.png */; };
@@ -32,6 +36,10 @@
 
 /* Begin PBXFileReference section */
 		433A0F061D8F3A5200F64CA4 /* Ball.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ball.swift; sourceTree = "<group>"; };
+		4391C8CC1DBBDA0D0008FA85 /* Corner.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Corner.png; sourceTree = "<group>"; };
+		4391C8CD1DBBDA0D0008FA85 /* Corner.xcf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Corner.xcf; sourceTree = "<group>"; };
+		4391C8CE1DBBDA0D0008FA85 /* Edge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Edge.png; sourceTree = "<group>"; };
+		4391C8CF1DBBDA0D0008FA85 /* Edge.xcf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Edge.xcf; sourceTree = "<group>"; };
 		43BF73781D975AAC00EFE1FB /* Joystick.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Joystick.swift; sourceTree = "<group>"; };
 		43D21C361DA0218C0076EE33 /* Throttle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Throttle.swift; sourceTree = "<group>"; };
 		43D21C3E1DA03D970076EE33 /* throttle_base.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = throttle_base.png; path = Images/ControlButtons/throttle_base.png; sourceTree = "<group>"; };
@@ -78,6 +86,7 @@
 		4340E42C1D974F25004A76FC /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				4391C8CB1DBBDA0D0008FA85 /* Field */,
 				4340E42D1D974F52004A76FC /* ControlButtons */,
 				43DF8DBF1D77C52300F7C9C0 /* Cars */,
 				433A0F081D8F3C6200F64CA4 /* Balls */,
@@ -96,6 +105,18 @@
 				43D21C3F1DA03D970076EE33 /* throttle.png */,
 			);
 			name = ControlButtons;
+			sourceTree = "<group>";
+		};
+		4391C8CB1DBBDA0D0008FA85 /* Field */ = {
+			isa = PBXGroup;
+			children = (
+				4391C8CC1DBBDA0D0008FA85 /* Corner.png */,
+				4391C8CD1DBBDA0D0008FA85 /* Corner.xcf */,
+				4391C8CE1DBBDA0D0008FA85 /* Edge.png */,
+				4391C8CF1DBBDA0D0008FA85 /* Edge.xcf */,
+			);
+			name = Field;
+			path = Images/Field;
 			sourceTree = "<group>";
 		};
 		43DF8DBE1D77C52300F7C9C0 /* Resources */ = {
@@ -212,14 +233,18 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4391C8D31DBBDA0D0008FA85 /* Edge.xcf in Resources */,
 				43D21C511DA041FD0076EE33 /* joyStickBase2.png in Resources */,
 				43FE94F61D750E3500076646 /* LaunchScreen.storyboard in Resources */,
+				4391C8D21DBBDA0D0008FA85 /* Edge.png in Resources */,
 				43D21C471DA03E020076EE33 /* BasicCar.png in Resources */,
 				43D21C491DA03F400076EE33 /* ball.png in Resources */,
 				43FE94F31D750E3500076646 /* Assets.xcassets in Resources */,
 				43D21C441DA03D970076EE33 /* throttle_base.png in Resources */,
+				4391C8D01DBBDA0D0008FA85 /* Corner.png in Resources */,
 				43FE94F11D750E3500076646 /* Main.storyboard in Resources */,
 				43D21C4F1DA041FD0076EE33 /* joyStick@2000x2000.png in Resources */,
+				4391C8D11DBBDA0D0008FA85 /* Corner.xcf in Resources */,
 				43D21C451DA03D970076EE33 /* throttle.png in Resources */,
 				43D21C501DA041FD0076EE33 /* joyStickBase@3000x3000.png in Resources */,
 				43D21C4E1DA041FD0076EE33 /* joyStick.png in Resources */,
@@ -367,7 +392,7 @@
 				DEVELOPMENT_TEAM = GF6CNP58Y8;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				INFOPLIST_FILE = NCSoccer/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = nathanslager.NCSoccer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -384,7 +409,7 @@
 				DEVELOPMENT_TEAM = GF6CNP58Y8;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				INFOPLIST_FILE = NCSoccer/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = nathanslager.NCSoccer;
 				PRODUCT_NAME = "$(TARGET_NAME)";

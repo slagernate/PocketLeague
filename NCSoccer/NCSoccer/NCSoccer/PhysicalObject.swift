@@ -20,7 +20,7 @@ class PhysicalObject: SKSpriteNode {
 		physicsBody?.usesPreciseCollisionDetection = true
 		physicsBody?.affectedByGravity = true
 		
-    }
+	}
 	
 	required init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")

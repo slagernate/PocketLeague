@@ -9,12 +9,14 @@
 import UIKit
 import SpriteKit
 
-// Global Screen Size variable
+// Global Variables
 var screenSize: CGSize!
-
-// Global Font Variable
 var gill: String = "Gill Sans"
 
+var CAM_SCALE: CGFloat = 1.0
+var CAM_ZOOM_FACTOR: CGFloat = 1.01
+
+	
 class SoccerSceneViewController: UIViewController {
 
 	// View Size

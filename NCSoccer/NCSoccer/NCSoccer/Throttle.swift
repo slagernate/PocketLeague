@@ -30,10 +30,15 @@ class Throttle: SKSpriteNode {
 		super.init(texture: throttleBaseTexture, color: UIColor.clear, size: throttleBaseSize)
 		
 		
-		// Define max and min for throttle position based on screen size
-		MAX_THROTTLE_POS = throttleBaseSize.height * (34.2/138.0)
-		MIN_THROTTLE_POS = throttleBaseSize.height * (-20.1/138.0)
+		// Define max and min for throttle position based on screen size and camera zoom
+		/*let throttle_pos_max_slope = (throttleBaseSize.height * (34.2/138.0) * CAM_ZOOM_SCALE)
+		let throttle_pos_max_offset = ((screenSize.height * CAM_ZOOM_SCALE)/2.0) - (screenSize.height/2.0)
+		MAX_THROTTLE_POS =  throttle_pos_max_slope - throttle_pos_max_offset
+		MIN_THROTTLE_POS = (throttleBaseSize.height * (-20.1/138.0) * CAM_ZOOM_SCALE) - (screenSize.height/CAM_ZOOM_SCALE)
+*/
 
+		MAX_THROTTLE_POS = CGFloat(31.24/125.0)*throttleBaseSize.height
+		MIN_THROTTLE_POS = CGFloat(-18.24/125.0)*throttleBaseSize.height
 		
 		// Setup
 		throttle.zPosition = self.zPosition + 2
@@ -53,6 +58,7 @@ class Throttle: SKSpriteNode {
 		if newpos > MAX_THROTTLE_POS {
 			newpos = MAX_THROTTLE_POS
 		}
+		
 		if newpos < MIN_THROTTLE_POS {
 			newpos = MIN_THROTTLE_POS
 		}

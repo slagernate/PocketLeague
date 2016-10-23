@@ -31,7 +31,7 @@ class Ball: PhysicalObject {
 		//Physics Setup
 		//self.physicsBody = SKPhysicsBody(edgeLoopFromRect: CGRect(origin: spawnPosition, size: carSize) )
 		self.physicsBody = SKPhysicsBody(circleOfRadius: self.size.height/2)
-		self.objectMass = CGFloat(0.005)
+		self.objectMass = CGFloat(0.00001)
 		physicsBody?.isDynamic = true // Default is true
 		physicsBody?.restitution = 1.0
 		

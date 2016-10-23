@@ -10,7 +10,7 @@ import SpriteKit
 
 class Car: PhysicalObject {
 
-    let MAXCARSPEED: CGFloat = 500
+	let MAXCARSPEED: CGFloat = 500
 	var steering: Bool
 	var diagonalLength: CGFloat
 	
@@ -19,7 +19,7 @@ class Car: PhysicalObject {
 		/* Temporary initialization.. will have further customization for different classes of cars */
 		let carTexture = SKTexture(imageNamed: "BasicCar")
 		let carWidth = CGFloat(screenSize.width/20)
-		let carScale = CGFloat(183.0/140.0)
+		let carScale = CGFloat(183.0/140.0) // TODO
 		let carSize = CGSize(width: (carWidth*carScale), height: carWidth)
 		
 		// Initialize movement variables
@@ -40,16 +40,16 @@ class Car: PhysicalObject {
 		//self.physicsBody = SKPhysicsBody(edgeLoopFromRect: CGRect(origin: spawnPosition, size: carSize) )
 		let carPhysicsSize = CGSize(width: self.size.width, height: self.size.height)
 		self.physicsBody = SKPhysicsBody(rectangleOf: carPhysicsSize)
-		self.objectMass = CGFloat(2000)
+		self.objectMass = CGFloat(20000)
 		self.physicsBody?.friction = 0.5
 		self.physicsBody?.angularDamping = 1.0
 		self.physicsBody?.linearDamping = 1.0
-		self.physicsBody?.restitution = 1.0
+		self.physicsBody?.restitution = 0.1
 		physicsBody?.isDynamic = true // Default is true
 		
 		
 		self.physicsBody?.categoryBitMask = PhysicsCategory.Car
-		self.physicsBody?.contactTestBitMask = PhysicsCategory.Car | PhysicsCategory.Ball
+		self.physicsBody?.contactTestBitMask = PhysicsCategory.Car | PhysicsCategory.Ball | PhysicsCategory.Boards
 		
 
 	}
@@ -78,7 +78,7 @@ class Car: PhysicalObject {
 		
 		self.physicsBody?.applyTorque(-(attenuatedTorque * adjustedTorqueFactor))
 		//print("adjusted torque: \(adjustedTorqueFactor)")
-
+		
 		
 		
 	}
