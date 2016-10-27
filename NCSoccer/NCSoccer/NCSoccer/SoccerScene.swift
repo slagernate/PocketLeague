@@ -22,6 +22,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 	var throttle: Throttle!
 	
 	var cam: SKCameraNode!
+	var camObjects = SKNode()
 	var innerCamPadding: CGFloat!
 	var outerCamPadding: CGFloat!
 	
@@ -67,11 +68,8 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		cam.setScale(CAM_SCALE)
 		self.camera = cam
 		self.addChild(cam)
-		
+		// Cam start pos
 		cam.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
-		
-		//// Cam children nodes
-		// Note: cam node origin is at center of screen, e.g. (0, 0)
 		
 		// Controls
 		
@@ -163,7 +161,12 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		
 	}
 	
-	
+	// MARK: - Physics Handling
+	func didBegin(_ contact: SKPhysicsContact) {
+		if ((contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask) & (PhysicsCategory.Car) == PhysicsCategory.Car) {
+			car1.collided = true
+		}
+	}
 	
 	// MARK: - Frame Cycle
     override func update(_ currentTime: TimeInterval) {
@@ -189,6 +192,22 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 				}
 				
 				
+				if (car.collided) {
+					car.collided = false
+					car.collisionCoolDown = true
+					car.collideTime = 1
+				}
+				else if (car.collisionCoolDown) {
+					if (car.collideTime > car.driftTime) {
+						car.collisionCoolDown = false
+						car.collideTime = 0
+					}
+					car.collideTime += 1
+				} else {
+					car.collideTime = 100
+				}
+			
+
 				// Converts spaceship movement to car movement by offsetting lateral velocity
 				
 				let driftDiff = atan2((carVelocity?.dy)!, (carVelocity?.dx)!) - (car.zRotation)
@@ -209,7 +228,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 					car.steerTowards(direction: self.joyStick.steeringAngle)
 				}
 				
-				// Mirror boundaries
+								// Mirror boundaries
 				/*
 				if car.position.x > (self.frame.width + car.diagonalLength/2.0) {
 					car.position.x = 0
@@ -275,7 +294,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 			}
 		}
 		
-		// The withName parameter here is using regex. Google regex if you're unfamiliar.
+		// The withName parameter here is using regex.
 		self.enumerateChildNodes(withName: "(^car$|^ball$)", using: countObjectsOutsideOuterRect)
 		if (objectsOutsideOuterRect > 0) {
 			CAM_SCALE *= CAM_ZOOM_FACTOR // Zoom out
@@ -354,8 +373,10 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 			ySum += (node?.position.y)!
 			objects += 1
 		}
+		
 		self.enumerateChildNodes(withName: "(^car$|^ball$)", using: sumCamObjectPositions)
 		let CAM_POS = CGPoint(x: xSum/objects, y: ySum/objects)
 		cam.position = CAM_POS
+		
 	}
 }
