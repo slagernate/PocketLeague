@@ -5,7 +5,7 @@
 //  Created by Nathan Slager on 10/1/16.
 //  Copyright © 2016 nathanslager. All rights reserved.
 //
-
+#if THROTTLE
 import SpriteKit
 
 
@@ -80,3 +80,4 @@ class Throttle: SKSpriteNode {
 	}
 }
 
+#endif

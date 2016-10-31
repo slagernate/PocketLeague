@@ -11,15 +11,23 @@ import SpriteKit
 class Joystick: SKSpriteNode {
 	
 	var touching: Bool = false
-	var lever: SKSpriteNode!
+	var stick: SKSpriteNode!
 	var steeringAngle: CGFloat
+	#if THROTTLE
+	#else
+	var steeringMagnitudeRatio: CGFloat
+	#endif
 	
-	// Max distance joystick lever can deviate from base
-	var leverLeash: CGFloat!
+	// Max distance joystick stick can deviate from base
+	var stickLeash: CGFloat!
 
 	init () {
 		
 		// Initialization
+		#if THROTTLE
+		#else
+		steeringMagnitudeRatio = 0
+		#endif
 		steeringAngle = 0
 		
 		//let joystickTexture = SKTexture(imageNamed: "joyStick")
@@ -28,17 +36,17 @@ class Joystick: SKSpriteNode {
 		let joystickBaseSize = CGSize(width: screenSize.height/7.5, height: screenSize.height/7.5)
 		super.init(texture: joystickBaseTexture, color: UIColor.clear, size: joystickBaseSize)
 		
-		// Add lever on top of joystick base
+		// Add stick on top of joystick base
 		let joystickTexture = SKTexture(imageNamed: "joyStick@2000x2000")
 		let joystickSize = CGSize(width: screenSize.height/6.0, height: screenSize.height/6.0)
-		lever = SKSpriteNode(texture: joystickTexture, color: UIColor.clear, size: joystickSize)
-		lever.position = self.position
-		// Set lever on top of base
-		lever.zPosition = self.zPosition + 1
-		self.addChild(lever)
+		stick = SKSpriteNode(texture: joystickTexture, color: UIColor.clear, size: joystickSize)
+		stick.position = self.position
+		// Set stick on top of base
+		stick.zPosition = self.zPosition + 1
+		self.addChild(stick)
 		
-		// Set lever leash distance
-		leverLeash = lever.size.width/2
+		// Set stick leash distance
+		stickLeash = stick.size.width/2
 		
 		self.name = "joystick"
 
@@ -47,7 +55,7 @@ class Joystick: SKSpriteNode {
 	
 	func steerTowards(position: CGPoint) {
 		// Convert from absolute (soccer field) coordinates to coordinates relative to joystick base
-		// E.g. if touch == self.position then lever.position = CGPoint(x: 0, y: 0) 
+		// E.g. if touch == self.position then stick.position = CGPoint(x: 0, y: 0) 
 		// -Child node position is relative to parent node
 		//print("input pos x: \(position.x) y: \(position.y)")
 		let relativePosition = CGPoint(x: position.x - self.position.x, y: position.y - self.position.y)
@@ -59,14 +67,21 @@ class Joystick: SKSpriteNode {
 			angle += CGFloat(M_PI * 2)
 		}
 		*/
-		let hype = hypot(relativePosition.x, relativePosition.y)
-		if ( hype > leverLeash ) {
-			lever.position = CGPoint(x: (cos(angle)*leverLeash), y: (sin(angle)*leverLeash))
+		
+		let mag = hypot(relativePosition.x, relativePosition.y)
+		if ( mag > stickLeash ) {
+			stick.position = CGPoint(x: (cos(angle)*stickLeash), y: (sin(angle)*stickLeash))
 		} else {
-			lever.position = relativePosition
+			stick.position = relativePosition
 		}
 		
-		//print("x: \(lever.position.x), y: \(lever.position.y)")
+		print(relativePosition.x)
+		#if THROTTLE
+		#else
+		steeringMagnitudeRatio = mag/stickLeash
+		#endif
+		
+		//print("x: \(stick.position.x), y: \(stick.position.y)")
 		//print("Steering angle: \(angle)")
 
 		steeringAngle = angle

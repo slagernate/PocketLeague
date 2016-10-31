@@ -10,7 +10,8 @@ import SpriteKit
 
 class Ball: PhysicalObject {
 	
-	let MAXBALLSPEED :CGFloat = 0.08
+	let MAXBALLSPEED: CGFloat = 0.08
+	let BALLMASS: CGFloat = 8.0
 	//var accelerate: Bool
 	//var steerRight: Bool
 	//var steerLeft: Bool
@@ -29,9 +30,8 @@ class Ball: PhysicalObject {
 		self.name = "ball"
 		
 		//Physics Setup
-		//self.physicsBody = SKPhysicsBody(edgeLoopFromRect: CGRect(origin: spawnPosition, size: carSize) )
 		self.physicsBody = SKPhysicsBody(circleOfRadius: self.size.height/2)
-		self.objectMass = CGFloat(0.0000000000001)
+		self.physicsBody?.mass = BALLMASS
 		physicsBody?.isDynamic = true // Default is true
 		physicsBody?.restitution = 1.0
 		

@@ -11,6 +11,7 @@ import SpriteKit
 class Car: PhysicalObject {
 
 	let MAXCARSPEED: CGFloat = 500
+	let CARMASS: CGFloat = 50
 	var steering: Bool
 	var diagonalLength: CGFloat
 	var collided: Bool = false
@@ -44,7 +45,7 @@ class Car: PhysicalObject {
 		//self.physicsBody = SKPhysicsBody(edgeLoopFromRect: CGRect(origin: spawnPosition, size: carSize) )
 		let carPhysicsSize = CGSize(width: self.size.width, height: self.size.height)
 		self.physicsBody = SKPhysicsBody(rectangleOf: carPhysicsSize)
-		self.objectMass = CGFloat(2000000000)
+		self.physicsBody?.mass = CARMASS
 		self.physicsBody?.friction = 0.5
 		self.physicsBody?.angularDamping = 1.0
 		self.physicsBody?.linearDamping = 1.0
@@ -76,16 +77,8 @@ class Car: PhysicalObject {
 		// car's angular velocity is high, this term will kick in and reverse the applied torque to smooth out the
 		// car's oscillations and overcorrections
 		let rotationalVelocity = self.physicsBody?.angularVelocity
-		let correctionTorque = (rotationalVelocity! / (abs(requestedTorque) + 0.2)) * CGFloat(0.001)
+		let correctionTorque = (rotationalVelocity! / (abs(requestedTorque) + 2.0))
 		
-		//requestedTorque -= output
-		// Didn't work :(
-		// Slow rotation down to eliminate unwanted oscillations
-		//requestedTorque *= CGFloat(1.0/(1.0 + pow(CGFloat(M_E), -abs(requestedTorque))))
-
-		//print("requested torque: \(requestedTorque)")
-		let attenuatedTorque = CGFloat(0.002) * requestedTorque
-		//let attenuatedTorque = (requestedTorque * torqueAttenuator)
 		
 		let carVelocity = hypot((self.physicsBody?.velocity.dx)!, (self.physicsBody?.velocity.dy)!)
 
@@ -95,8 +88,8 @@ class Car: PhysicalObject {
 		/* https://www.wolframalpha.com/input/?i=graph+y+%3D+1%2F(+(x%5E3)+*+(+e%5E(1%2F(x))+-+1+)+) */
 		let adjustedTorqueFactor = 1.0/(pow(carVelRatio, 3.0) * (pow(CGFloat(M_E), 1.0/(carVelRatio)) - 1.0))
 		
-		
-		let torque = ((-correctionTorque - attenuatedTorque) * adjustedTorqueFactor)
+		let torqueAttenuationFactor = CARMASS
+		let torque = ((-correctionTorque - requestedTorque) * adjustedTorqueFactor) * torqueAttenuationFactor
 		self.physicsBody?.applyTorque(torque)
 		
 		//self.physicsBody?.applyTorque(-output * 0.0015 * adjustedTorqueFactor)
