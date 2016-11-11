@@ -88,8 +88,8 @@ class Car: PhysicalObject {
 		/* https://www.wolframalpha.com/input/?i=graph+y+%3D+1%2F(+(x%5E3)+*+(+e%5E(1%2F(x))+-+1+)+) */
 		let adjustedTorqueFactor = 1.0/(pow(carVelRatio, 3.0) * (pow(CGFloat(M_E), 1.0/(carVelRatio)) - 1.0))
 		
-		let torqueAttenuationFactor = CARMASS
-		let torque = ((-correctionTorque - requestedTorque) * adjustedTorqueFactor) * torqueAttenuationFactor
+		let torqueAttenuationFactor = CGFloat(10) //CARMASS
+		let torque = (( -correctionTorque -  requestedTorque) * adjustedTorqueFactor) * torqueAttenuationFactor
 		self.physicsBody?.applyTorque(torque)
 		
 		//self.physicsBody?.applyTorque(-output * 0.0015 * adjustedTorqueFactor)

@@ -13,7 +13,7 @@ import SpriteKit
 var screenSize: CGSize!
 var gill: String = "Gill Sans"
 
-var CAM_SCALE: CGFloat = 1.0
+var CAM_SCALE: CGFloat = 2.0
 var CAM_ZOOM_FACTOR: CGFloat = 1.01
 
 	
@@ -46,7 +46,7 @@ class SoccerSceneViewController: UIViewController {
         skView.showsNodeCount = true
 		
 		// Physics Debug
-		skView.showsPhysics = false
+		skView.showsPhysics = true
 	
         /* Sprite Kit applies additional optimizations to improve rendering performance */
         skView.ignoresSiblingOrder = true
@@ -79,6 +79,7 @@ class SoccerSceneViewController: UIViewController {
     override var prefersStatusBarHidden : Bool {
         return true
     }
+	
 }
 
 

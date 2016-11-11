@@ -46,7 +46,7 @@ class Joystick: SKSpriteNode {
 		self.addChild(stick)
 		
 		// Set stick leash distance
-		stickLeash = stick.size.width/2
+		stickLeash = (stick.size.width/2) * 1.5
 		
 		self.name = "joystick"
 
@@ -68,14 +68,14 @@ class Joystick: SKSpriteNode {
 		}
 		*/
 		
-		let mag = hypot(relativePosition.x, relativePosition.y)
+		let mag: CGFloat! = hypot(relativePosition.x, relativePosition.y)
 		if ( mag > stickLeash ) {
 			stick.position = CGPoint(x: (cos(angle)*stickLeash), y: (sin(angle)*stickLeash))
 		} else {
 			stick.position = relativePosition
 		}
 		
-		print(relativePosition.x)
+		//print(relativePosition.x)
 		#if THROTTLE
 		#else
 		steeringMagnitudeRatio = mag/stickLeash

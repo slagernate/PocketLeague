@@ -9,7 +9,6 @@
 import SpriteKit
 
 
-
 class SoccerScene: SKScene, SKPhysicsContactDelegate {
 	
 	var car1: Car!
@@ -44,11 +43,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		//self.physicsBody?.categoryBitMask = PhysicsCategory.Boards
 		//self.physicsBody?.contactTestBitMask = PhysicsCategory.Ball
 		
-		
-		// Field
-		let Field = SKSpriteNode(color: SKColor.clear, size: CGSize(width: frame.size.width, height: frame.size.height))
-		Field.position = CGPoint(x: frame.midX, y: frame.midY)
-		addChild(Field)
+		loadField()
 		
 		// Corner
 		
@@ -90,6 +85,80 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		
 	} // DidMoveTo
 	
+	
+	func loadField() {
+		// Field
+		//let Field = SKSpriteNode(color: SKColor.clear, size: CGSize(width: frame.size.width, height: frame.size.height))
+		/*let edgeTexture = SKTexture(imageNamed: "edge2")
+		let edge = SKSpriteNode(texture: edgeTexture)
+		edge.size = CGSize(width: screenSize.height/2.0, height: screenSize.height/5.0)
+		edge.position = CGPoint(x: frame.midX, y: frame.midY)
+		edge.physicsBody = SKPhysicsBody(texture: edgeTexture, alphaThreshold: 0.5, size: edge.size)
+		edge.physicsBody?.isDynamic = false
+		//edge.zRotation += CGFloat(M_PI/2.0)
+		*/
+		
+		
+		// Construct field
+		let fieldElemLen = fieldElemSize.width
+		//var startingPos = CGPoint(x: (-FIELD_WIDTH/2.0) + (fieldElemLen/2.0), y: (-FIELD_WIDTH/2.0) + (fieldElemLen/2.0))
+		var startingPos = CGPoint.zero
+		let xElems = UInt(HORIZ_FIELD_ELEMS-1)
+		let yElems = UInt(VERT_FIELD_ELEMS-1)
+		
+		for x in 0...xElems {
+			for y in 0...yElems {
+				
+				if x == 0 { // Western boundaries
+					if y == 0 {
+						let southWestCorner = Corner(spawnPosition: startingPos)
+						southWestCorner.zRotation += CGFloat(M_PI)
+						self.addChild(southWestCorner)
+					} else if y == yElems/2 {
+						//let westGoal = Goal(spawnPosition: CGPoint(x: startingPos.x, y: startingPos.y + (fieldElemLen * CGFloat(y))))
+						//self.addChild(westGoal)
+					} else if y == yElems {
+						let northWestCorner = Corner(spawnPosition: CGPoint(x: startingPos.x, y: startingPos.y + (fieldElemLen * CGFloat(y))))
+						northWestCorner.zRotation += CGFloat(M_PI/2.0)
+						self.addChild(northWestCorner)
+					} else {
+						let westEdge = Edge(spawnPosition: CGPoint(x: startingPos.x, y: startingPos.y + (fieldElemLen * CGFloat(y))))
+						westEdge.zRotation += CGFloat(M_PI/2.0)
+						self.addChild(westEdge)
+					}
+				} else if x == xElems { // Eastern boundaries
+					if y == 0 {
+						startingPos.x = startingPos.x + (fieldElemLen * CGFloat(x))
+						let southEastCorner = Corner(spawnPosition: startingPos)
+						southEastCorner.zRotation -= CGFloat(M_PI * 0.5)
+						self.addChild(southEastCorner)
+					} else if y == yElems/2 {
+						//let eastGoal = Goal(spawnPosition: CGPoint(x: startingPos.x, y: startingPos.y + (fieldElemLen * CGFloat(y))))
+						//self.addChild(eastGoal)
+					} else if y == yElems {
+						let northEastCorner = Corner(spawnPosition: CGPoint(x: startingPos.x, y: startingPos.y + (fieldElemLen * CGFloat(y))))
+						self.addChild(northEastCorner)
+					} else {
+						let eastEdge = Edge(spawnPosition: CGPoint(x: startingPos.x, y: startingPos.y + (fieldElemLen * CGFloat(y))))
+						eastEdge.zRotation -= CGFloat(M_PI/2.0)
+						self.addChild(eastEdge)
+					}
+				} else { // Top and bottom boundaries
+					if y == 0 {
+						let southEdge = Edge(spawnPosition: CGPoint(x: startingPos.x + (fieldElemLen * CGFloat(x)), y: startingPos.y))
+						southEdge.zRotation += CGFloat(M_PI)
+						self.addChild(southEdge)
+					}  else if y == yElems {
+						let northEdge = Edge(spawnPosition: CGPoint(x: startingPos.x + (fieldElemLen * CGFloat(x)), y: startingPos.y + (fieldElemLen * CGFloat(y))))
+						self.addChild(northEdge)
+					}
+				}
+				
+				
+			}
+		}
+	}
+
 	
 	// MARK: - Touch Handling
 	
@@ -265,7 +334,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 
 		// Set camera zoom padding
 		innerCamPadding = (screenSize.height/2.0) * CAM_SCALE
-		outerCamPadding = (screenSize.height/8.0) * CAM_SCALE
+		outerCamPadding = (screenSize.height/4.0) * CAM_SCALE
 
 		// Create inner and outer paddings to cushion camera movement
 		let cameraWidth = screenSize.width * CAM_SCALE
@@ -314,8 +383,9 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 			}
 		}
 		
-		if (CAM_SCALE < 1.0) {CAM_SCALE = 1.0}
-		if (CAM_SCALE > 4.0) {CAM_SCALE = 4.0}
+		if (CAM_SCALE < 5.0) {CAM_SCALE = 5.0}
+		if (CAM_SCALE > 6.0) {CAM_SCALE = 6.0}
+		print(CAM_SCALE)
 		cam.setScale(CAM_SCALE)
 
 

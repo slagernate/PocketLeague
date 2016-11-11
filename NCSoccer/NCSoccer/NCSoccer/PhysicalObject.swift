@@ -10,15 +10,13 @@ import SpriteKit
 
 class PhysicalObject: SKSpriteNode {
 
-	var objectMass: CGFloat!
-
 	override init(texture: SKTexture!, color: UIColor, size: CGSize) {
 		super.init(texture: texture, color: color, size: size)
 		self.name = "physicalObject"
 		
 		//Physics setup
 		physicsBody?.usesPreciseCollisionDetection = true
-		physicsBody?.affectedByGravity = true
+		physicsBody?.affectedByGravity = false
 		
 	}
 	
