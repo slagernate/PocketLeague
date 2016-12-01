@@ -385,7 +385,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		
 		if (CAM_SCALE < 5.0) {CAM_SCALE = 5.0}
 		if (CAM_SCALE > 6.0) {CAM_SCALE = 6.0}
-		print(CAM_SCALE)
+		//print(CAM_SCALE)
 		cam.setScale(CAM_SCALE)
 
 

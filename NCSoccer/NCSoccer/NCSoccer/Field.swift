@@ -56,7 +56,7 @@ class Corner: Field {
 
 		physicsBody = SKPhysicsBody(edgeChainFrom: path.cgPath)
 		physicsBody?.isDynamic = false
-
+		
 		
 	}
 

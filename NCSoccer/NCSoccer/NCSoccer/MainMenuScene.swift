@@ -7,6 +7,7 @@
 //
 
 import SpriteKit
+import GameKit
 
 
 class MainMenuScene: SKScene {
@@ -14,6 +15,7 @@ class MainMenuScene: SKScene {
 	var playLabel: SKLabelNode!
 	var howtoLabel: SKLabelNode!
 	var adjustedSize: CGFloat!
+	let gcNotEnabled = SKLabelNode(fontNamed: gill)
 	
 	// Preloaded Sound
 	//var playMenuSound: SKAction!
@@ -31,23 +33,29 @@ class MainMenuScene: SKScene {
 
 		adjustedSize = CGFloat((screenSize.width + screenSize.height)/2.0)
 		
-		backgroundColor = UIColor.black
+		backgroundColor = UIColor.white
 		
 		// Add a "champion archer title"
 		let titleLabel = SKLabelNode(fontNamed: gill)
 		titleLabel.text = "NC Soccer"
 		titleLabel.fontSize = screenSize.width/10
-		titleLabel.fontColor = UIColor.white
+		titleLabel.fontColor = UIColor.black
 		titleLabel.position = CGPoint(x: size.width/2, y: size.height*3/4)
 		addChild(titleLabel)
 		
-		// Add a play label/button
+		// Add a find match label/button
 		playLabel = SKLabelNode(fontNamed: gill)
-		playLabel.text = "Play"
+		playLabel.text = "Find Match"
 		playLabel.fontSize = screenSize.width/14
-		playLabel.fontColor = UIColor.white
+		playLabel.fontColor = UIColor.black
 		playLabel.position = CGPoint(x: size.width/2, y: size.height*1/2)
 		addChild(playLabel)
+		
+		// Add a "Game center not enabled"
+		gcNotEnabled.text = "Game Center not enabled"
+		gcNotEnabled.fontSize = screenSize.width/40
+		gcNotEnabled.fontColor = UIColor.black
+		gcNotEnabled.position = CGPoint(x: size.width/2, y: size.height*3.5/8)
 		
 		// Slap an skspitenode (button) on top of the play label
 		let playNode = SKSpriteNode(color: UIColor.clear, size: CGSize(width: size.width/8, height: size.height/8.0))
@@ -59,7 +67,7 @@ class MainMenuScene: SKScene {
 		howtoLabel = SKLabelNode(fontNamed: gill)
 		howtoLabel.text = "How To Play"
 		howtoLabel.fontSize = screenSize.width/14
-		howtoLabel.fontColor = UIColor.white
+		howtoLabel.fontColor = UIColor.black
 		howtoLabel.position = CGPoint(x: size.width/2, y: size.height*1/4)
 		addChild(howtoLabel)
 		
@@ -126,11 +134,8 @@ class MainMenuScene: SKScene {
 			if self.atPoint(Touch.location(in: self)) is SKSpriteNode {
 				let testNode = self.atPoint(Touch.location(in: self)) as! SKSpriteNode
 				if testNode.name! == "playButton" {
-					let skView = self.view as SKView!
-					let scene = SoccerScene(size: size)
-					//hideAds()
-					let pushInDirection = SKTransition.push(with: SKTransitionDirection.left, duration: 0.4)
-					skView?.presentScene(scene, transition:  pushInDirection)
+					NotificationCenter.default.post(name: Notification.Name(rawValue: findMatchNotificationKey), object: nil)
+
 				} /*else if testNode.name! == "howTo" {
 					let scene = InstructionsScene(size: self.view!.bounds.size)
 					hideAds()
@@ -141,14 +146,23 @@ class MainMenuScene: SKScene {
 			}
 		}
 	}
+	
+
+	func revealGCNotEnabled() {
+		self.addChild(gcNotEnabled)
+	}
+	
+	func addObservers() {
+		NotificationCenter.default.addObserver(self, selector: #selector(revealGCNotEnabled), name: NSNotification.Name(rawValue: gcNotEnabledKey), object: nil)
+	}
 }
 
-	
 
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 
