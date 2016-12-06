@@ -12,6 +12,7 @@ import SpriteKit
 class SoccerScene: SKScene, SKPhysicsContactDelegate {
 	
 	var car1: Car!
+	//var ball: Ball!
 	
 	// Controls
 	var touchingJoystick: Bool = false
@@ -25,16 +26,54 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 	var camObjects = SKNode()
 	var innerCamPadding: CGFloat!
 	var outerCamPadding: CGFloat!
-	
+    var myLabel = SKLabelNode(fontNamed: "Arial")
+    
+    func createSceneContents() {
+        self.backgroundColor = .black
+        self.scaleMode = .aspectFit
+        self.physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
+    }
+    
     override func didMove(to view: SKView) {
+		
+		//let screenRect = UIScreen.mainScreen().bounds
 		
 		// Physics
 		physicsWorld.gravity = CGVector(dx: 0, dy: 0)
 		
 		physicsWorld.contactDelegate = self
 		
+		// Create boundary for field
+		//let FieldBoundary = CGRect(x: 0, y: 0, width: screenRect.width, height: screenRect.height)
+		//let boundaryBody = SKPhysicsBody(edgeLoopFrom: self.frame)
+		//self.physicsBody = boundaryBody
+		//self.physicsBody?.categoryBitMask = PhysicsCategory.Boards
+		//self.physicsBody?.contactTestBitMask = PhysicsCategory.Ball
+<<<<<<< .merge_file_CUWMm8
+        
+        //createSceneContents();
+    
+        myLabel.text = "1"
+        myLabel.fontSize = 30
+        myLabel.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
+        
+        self.addChild(myLabel)
+        
+		// Field
+		let Field = SKSpriteNode(color: SKColor.gray, size: CGSize(width: frame.size.width, height: frame.size.height))
+		Field.position = CGPoint(x: frame.midX, y: frame.midY)
+		addChild(Field)
+        createSceneContents()
+        
+=======
+		
 		loadField()
 		
+		// Corner
+		
+		//let corner = SKSpriteNode(
+		
+>>>>>>> .merge_file_0NI3R5
 		
 		// Add a car
 		let carSpawnSpot = CGPoint(x: 50, y: frame.midY)
@@ -53,7 +92,9 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		self.addChild(cam)
 		// Cam start pos
 		cam.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
-				
+		
+		// Controls
+		
 		// joystick
 		joyStick = Joystick()
 		joyStick.position = CGPoint(x: -frame.midX/2.0, y: -frame.midY/2.0)
@@ -369,7 +410,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		
 		if (CAM_SCALE < 5.0) {CAM_SCALE = 5.0}
 		if (CAM_SCALE > 6.0) {CAM_SCALE = 6.0}
-		//print(CAM_SCALE)
+		print(CAM_SCALE)
 		cam.setScale(CAM_SCALE)
 
 
@@ -440,6 +481,8 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		self.enumerateChildNodes(withName: "(^car$|^ball$)", using: sumCamObjectPositions)
 		let CAM_POS = CGPoint(x: xSum/objects, y: ySum/objects)
 		cam.position = CAM_POS
+        
+        myLabel.position =  CGPoint(x: xSum/objects + 70, y: ySum/objects + 70)
 		
 	}
 

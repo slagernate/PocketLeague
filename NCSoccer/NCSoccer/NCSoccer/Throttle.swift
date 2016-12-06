@@ -8,8 +8,6 @@
 #if THROTTLE
 import SpriteKit
 
-
-
 class Throttle: SKSpriteNode {
 
 	var MAX_THROTTLE_POS: CGFloat!
