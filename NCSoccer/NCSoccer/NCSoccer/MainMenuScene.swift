@@ -135,6 +135,12 @@ class MainMenuScene: SKScene {
 				let testNode = self.atPoint(Touch.location(in: self)) as! SKSpriteNode
 				if testNode.name! == "playButton" {
 					NotificationCenter.default.post(name: Notification.Name(rawValue: findMatchNotificationKey), object: nil)
+					/*
+					let skView = self.view as SKView!
+					let scene = SoccerScene(size: (self.view!.bounds.size))
+					let pushInDirection = SKTransition.push(with: SKTransitionDirection.left, duration: 0.4)
+					skView?.presentScene(scene, transition:  pushInDirection)
+*/
 
 				} /*else if testNode.name! == "howTo" {
 					let scene = InstructionsScene(size: self.view!.bounds.size)

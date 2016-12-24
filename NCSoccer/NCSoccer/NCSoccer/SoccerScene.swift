@@ -7,12 +7,21 @@
 //
 
 import SpriteKit
+import GameKit
 
+enum GameState {
+	case findingHost
+	case hostFound
+	case readyToStart
+	case started
+	case paused
+	case ended
+}
 
-class SoccerScene: SKScene, SKPhysicsContactDelegate {
+class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 	
 	var car1: Car!
-	//var ball: Ball!
+	var ball: Ball!
 	
 	// Controls
 	var touchingJoystick: Bool = false
@@ -26,6 +35,21 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 	var camObjects = SKNode()
 	var innerCamPadding: CGFloat!
 	var outerCamPadding: CGFloat!
+	
+	//var network: Network! // TODO: factor Network code into a class
+	var recieveBuffer: UnsafeMutableBufferPointer<Any>!
+	var match: GKMatch!
+	var gameState: GameState = GameState.findingHost
+	var host: Bool = false
+	var hostID: String?
+	
+	//var hostID: String!
+	var hostingMatch: Bool = false
+	
+	//var randomNumber = arc4random()
+	
+	var playerDict = [String: UInt32]()
+	var localPlayerID: String?
 	
     override func didMove(to view: SKView) {
 		
@@ -50,15 +74,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		//let corner = SKSpriteNode(
 		
 		
-		// Add a car
-		let carSpawnSpot = CGPoint(x: 50, y: frame.midY)
-		car1 = Car(spawnPosition: carSpawnSpot)
-		addChild(car1)
 		
-		// Add ball
-		let ballSpawnSpot = CGPoint(x: frame.midX*1.5, y: frame.midY)
-		let ball = Ball(spawnPosition: ballSpawnSpot)
-		addChild(ball)
 
 		// Camera
 		cam = SKCameraNode()
@@ -83,7 +99,26 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		cam.addChild(throttle)
 		#endif
 		
-	} // DidMoveTo
+		localPlayerID = GKLocalPlayer.localPlayer().playerID
+		playerDict["\(localPlayerID!)"] = arc4random()
+		
+		print(" size of playerDict: \(playerDict.count)")
+
+		
+		self.isPaused = true
+		/*
+		if (gameCenterEnabled) {
+			self.match.chooseBestHostingPlayer(completionHandler: {(player: GKPlayer?) -> Void in
+				self.hostID = player?.playerID
+				if player?.playerID == GKLocalPlayer.localPlayer().playerID {
+					self.hostingMatch = true
+					self.view?.backgroundColor = UIColor.red
+				}
+			})
+		}
+		print("The best player to host the game is: \(self.hostID)")
+*/
+	}
 	
 	
 	func loadField() {
@@ -159,13 +194,27 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		}
 	}
 
+	func startGame() {
+		
+		
+		// Add a car
+		let carSpawnSpot = CGPoint(x: 50, y: frame.midY)
+		car1 = Car(spawnPosition: carSpawnSpot)
+		addChild(car1)
+		
+		// Add ball
+		let ballSpawnSpot = CGPoint(x: frame.midX*1.5, y: frame.midY)
+		self.ball = Ball(spawnPosition: ballSpawnSpot)
+		addChild(ball)
+		
+		
+	}
 	
 	// MARK: - Touch Handling
 	
 
 	
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        /* Called when a touch begins */
 		
 		var steering = 0
 		for Touch in touches {
@@ -246,10 +295,24 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		}
 	}
 	
+	func resetBall(pos: CGPoint) {
+		ball.position = pos
+		ball.physicsBody?.velocity.dx = 0
+		ball.physicsBody?.velocity.dy = 0
+		ball.physicsBody?.angularVelocity = 0
+	}
+	
 	// MARK: - Frame Cycle
     override func update(_ currentTime: TimeInterval) {
-        /* Called before each frame is rendered */
 		
+		let centerField = CGPoint(x: ((FIELD_WIDTH - fieldElemSize.width/2.0))/2.0,
+		                    y: (FIELD_HEIGHT - fieldElemSize.height/2.0)/2.0)
+		
+		if ball.position.x > (FIELD_WIDTH - fieldElemSize.width/2.0) {
+			resetBall(pos: centerField)
+		} else if ball.position.x < (-fieldElemSize.width/2.0) {
+			resetBall(pos: centerField)
+		}
 		
 		let updateCar: (SKNode?, UnsafeMutablePointer<ObjCBool>) -> Void = {
 			(node, NilLiteralConvertible) -> Void in
@@ -329,6 +392,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 	override func didFinishUpdate() {
 		/* Last method called before scene is rendered */
 		
+		checkNetwork()
 		
 		//// Check if objects are inside camera node
 
@@ -385,7 +449,6 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		
 		if (CAM_SCALE < 5.0) {CAM_SCALE = 5.0}
 		if (CAM_SCALE > 6.0) {CAM_SCALE = 6.0}
-		//print(CAM_SCALE)
 		cam.setScale(CAM_SCALE)
 
 
@@ -448,6 +511,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		let sumCamObjectPositions: (SKNode?, UnsafeMutablePointer<ObjCBool>) -> Void = {
 			(node, NilLiteralConvertible) -> Void in
 			// Sum x and y coordinates for centroid calculation
+			//print("node\(objects) X: \(node?.position.x)")
 			xSum += (node?.position.x)!
 			ySum += (node?.position.y)!
 			objects += 1
@@ -458,5 +522,282 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate {
 		cam.position = CAM_POS
 		
 	}
+	
+	
+	
+	// MARK: - Network
+
+	func checkNetwork() {
+		/*
+		guard (buffer != nil) else {
+			return
+		}
+		*/
+		
+		switch (gameState) {
+		case .findingHost:
+			
+			var randomNumberMessage = RandomNumberMessage()
+			let randomInteger = playerDict["\(localPlayerID!)"]
+			print("sending our random number, \(randomInteger)")
+			randomNumberMessage.randomNumber = randomInteger
+
+			let buffer = UnsafeBufferPointer(start: &randomNumberMessage, count: 1)
+			var data = Data()
+			data.append(buffer)
+			do {
+				try self.match.sendData(toAllPlayers: data, with: GKMatchSendDataMode.reliable)
+			} catch {
+				print("sendData() failed")
+			}
+			
+			/*
+			if (hostingMatch) {
+				var hostFoundMessage = MessageFromHost()
+				let buffer = UnsafeBufferPointer(start: &hostFoundMessage, count: 1)
+				var data = Data()
+				data.append(buffer)
+				do {
+					try self.match.sendData(toAllPlayers: data, with: GKMatchSendDataMode.unreliable)
+				} catch {
+					print("sendData() failed")
+				}
+			}
+			*/
+			/*
+			if (player?.playerID == GKLocalPlayer.localPlayer().playerID) {
+				var hostFoundMessage = (messageType: MessageType.hostIdentifier, hostID: player?.playerID)
+				let buffer = UnsafeBufferPointer(start: &hostFoundMessage, count: 1)
+			} else {
+				
+			}
+			
+			
+			var data = Data()
+			data.append(buffer)
+			self.match.sendData(toAllPlayers: data, with: GKMatchSendDataMode.unreliable)
+			
+		})
+		*/
+		
+			break
+		case .hostFound:
+			break
+		case .readyToStart:
+			break
+		case .started:
+			break
+		case .paused:
+			break
+		case .ended:
+			break
+			
+		}
+	} // checkNetwork()
+	
+	
+	
+	
+	
+	
+	
+	func handleReceivedData(data: Data, forRecipient recipient: GKPlayer? = nil, fromRemotePlayer sender: GKPlayer) {
+		
+		var messageType = MessageType.invalid
+		let messageTypeBuffer = UnsafeMutableBufferPointer(start: &messageType, count: 1)
+		let _ = data.copyBytes(to: messageTypeBuffer)
+		print("handling \(messageType) data")
+
+		
+		switch (gameState) {
+		case .findingHost:
+			
+			
+			print("finding host....")
+			
+			switch(messageType) {
+			case .randomNumberMessage:
+				print("random number received!")
+				// Unravel message
+				var randomNumberMessage = RandomNumberMessage()
+				let buffer = UnsafeMutableBufferPointer(start: &randomNumberMessage, count: 1)
+				let _ = data.copyBytes(to: buffer)
+				
+				// Add random number to player:randomNumber dictionary
+				//print("recvd message from unique player: \(sender.playerID)")
+				if let id = sender.playerID {
+					if (playerDict["\(id)"] == nil) {
+						print("Dict current contents:")
+						
+						for (key, value) in playerDict {
+							print("key: \(key), value: \(value)")
+						}
+						
+						print("adding random number: \(randomNumberMessage.randomNumber) with key: \(id)")
+						
+						playerDict["\(id)"] = randomNumberMessage.randomNumber
+						print(" size of playerDict: \(playerDict.count)")
+					}
+				}
+				
+				// Send out our random number (otherwise we might not ever send ours if this executes before checkNetwork())
+				var randomNumberMessageRespone = RandomNumberMessage()
+				randomNumberMessageRespone.randomNumber = playerDict[localPlayerID!]
+				let responseBuffer = UnsafeBufferPointer(start: &randomNumberMessageRespone, count: 1)
+				var responseData = Data()
+				responseData.append(responseBuffer)
+				do {
+					try self.match.sendData(toAllPlayers: responseData, with: GKMatchSendDataMode.reliable)
+				} catch {
+					print("sendData() failed")
+				}
+
+				// If all player's random numbers received then we're ready to start
+				if (playerDict.count == TOTAL_PLAYERS) {
+					hostID = keyMinValue(dict: playerDict)
+					if (hostID == localPlayerID) {
+						hostingMatch = true
+						print("we are hosting")
+					}
+					print("match started")
+					gameState = .started
+				}
+				
+				break
+			case .hostAcknowledged:
+				print("host acknowledged message received")
+				if (hostingMatch) {
+					gameState = GameState.started
+					print("Game started on host")
+				}
+				break
+			case .hostIdentifier:
+				print("host identifier message received")
+				hostID = sender.playerID
+				var hostAcknowledgedMessage = HostAcknowledgedMessage()
+				let buffer = UnsafeBufferPointer(start: &hostAcknowledgedMessage, count: 1)
+				var ack = Data()
+				ack.append(buffer)
+				do {
+					try self.match.sendData(toAllPlayers: ack, with: GKMatchSendDataMode.unreliable)
+					gameState = GameState.started
+				} catch {
+					print("Sending ack failed!")
+				}
+				print("Slave ready!")
+			default:
+				break
+				
+			}
+			
+			/*
+			if (hostingMatch) {
+				var hostFoundMessage = MessageFromHost()
+				let buffer = UnsafeBufferPointer(start: &hostFoundMessage, count: 1)
+				var data = Data()
+				data.append(buffer)
+				do {
+					try self.match.sendData(toAllPlayers: data, with: GKMatchSendDataMode.unreliable)
+				} catch {
+					print("sendData() failed")
+				}
+			}
+			/*
+			if (player?.playerID == GKLocalPlayer.localPlayer().playerID) {
+			var hostFoundMessage = (messageType: MessageType.hostIdentifier, hostID: player?.playerID)
+			let buffer = UnsafeBufferPointer(start: &hostFoundMessage, count: 1)
+			} else {
+			
+			}
+			
+			
+			var data = Data()
+			data.append(buffer)
+			self.match.sendData(toAllPlayers: data, with: GKMatchSendDataMode.unreliable)
+			
+			})
+			*/
+*/
+		case .hostFound:
+			break
+		case .readyToStart:
+			break
+		case .started:
+			break
+		case .paused:
+			break
+		case .ended:
+			break
+		
+		}
+	}
+	
+	//MARK: GKMatchDelegate Methods
+	func match(_ match: GKMatch, player: GKPlayer, didChange state: GKPlayerConnectionState) {
+		if (self.match != match) { return }
+		
+		switch (state) {
+		case GKPlayerConnectionState.stateConnected:
+			// handle new player connection
+			print("Player connected")
+			
+			if ((gameState == GameState.readyToStart) && (match.expectedPlayerCount == 0)) {
+				print("Match ready to start")
+			}
+			break
+			
+		case GKPlayerConnectionState.stateDisconnected:
+			print("Player disconnected!")
+			break
+			
+		case GKPlayerConnectionState.stateUnknown:
+			break
+			
+		}
+		
+	}
+	
+	func match(_ match: GKMatch, didReceive data: Data, forRecipient recipient: GKPlayer, fromRemotePlayer player: GKPlayer) {
+		if (self.match != match) { return }
+		handleReceivedData(data: data, forRecipient: recipient, fromRemotePlayer: player)
+		//print("received data from \(player.alias) for \(recipient.alias)")
+	}
+	
+	func match(_ match: GKMatch, didReceive data: Data, fromRemotePlayer player: GKPlayer) {
+		if (self.match != match) { return }
+		handleReceivedData(data: data, fromRemotePlayer: player)
+		print("recieved data from \(player)")
+	}
+	
+	func match(_ match: GKMatch, shouldReinviteDisconnectedPlayer player: GKPlayer) -> Bool {
+		if (self.match != match) { return false }
+		
+		print("match should reinvite disconnected player: \(player.alias)")
+		return false
+	}
+	
+	func match(_ match: GKMatch, didFailWithError error: Error?) {
+		if (self.match != match) { return }
+		
+		print("match failed with error: \(error)")
+	}
+	
+	
+	
+
 
 }
+
+
+func keyMinValue(dict: [String: UInt32]) -> String? {
+	
+	// Note that this doesn't accoutn for duplicate minimums
+	for (key, value) in dict {
+		if value == dict.values.min() {
+			return key
+		}
+	}
+	
+	return nil
+}
+

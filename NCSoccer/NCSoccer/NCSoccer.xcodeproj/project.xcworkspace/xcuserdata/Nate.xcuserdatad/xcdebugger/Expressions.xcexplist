@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "SoccerScene.handleReceivedData(data : Data, forRecipient : GKPlayer?, fromRemotePlayer : GKPlayer) -&gt; ():SoccerScene.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "playerDict">
+            </PersistentString>
+            <PersistentString
+               value = "sender">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

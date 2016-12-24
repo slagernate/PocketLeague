@@ -34,6 +34,7 @@
 		43DF8DB71D77ABBC00F7C9C0 /* PhysicalObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DF8DB61D77ABBC00F7C9C0 /* PhysicalObject.swift */; };
 		43DF8DB91D77B0F700F7C9C0 /* PhysicsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DF8DB81D77B0F700F7C9C0 /* PhysicsHandler.swift */; };
 		43DF8DBB1D77B90A00F7C9C0 /* Car.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DF8DBA1D77B90A00F7C9C0 /* Car.swift */; };
+		43FC0C551E0390D20067C375 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43FC0C541E0390D20067C375 /* Network.swift */; };
 		43FE94E81D750E3500076646 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43FE94E71D750E3500076646 /* AppDelegate.swift */; };
 		43FE94EC1D750E3500076646 /* SoccerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43FE94EB1D750E3500076646 /* SoccerScene.swift */; };
 		43FE94F11D750E3500076646 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 43FE94EF1D750E3500076646 /* Main.storyboard */; };
@@ -69,6 +70,7 @@
 		43DF8DB61D77ABBC00F7C9C0 /* PhysicalObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhysicalObject.swift; sourceTree = "<group>"; };
 		43DF8DB81D77B0F700F7C9C0 /* PhysicsHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhysicsHandler.swift; sourceTree = "<group>"; };
 		43DF8DBA1D77B90A00F7C9C0 /* Car.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Car.swift; sourceTree = "<group>"; };
+		43FC0C541E0390D20067C375 /* Network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		43FE94E41D750E3500076646 /* NCSoccer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NCSoccer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		43FE94E71D750E3500076646 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		43FE94EB1D750E3500076646 /* SoccerScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoccerScene.swift; sourceTree = "<group>"; };
@@ -193,6 +195,7 @@
 				43D21C361DA0218C0076EE33 /* Throttle.swift */,
 				433A0F061D8F3A5200F64CA4 /* Ball.swift */,
 				43DF8DAD1D76742000F7C9C0 /* SoccerSceneViewController.swift */,
+				43FC0C541E0390D20067C375 /* Network.swift */,
 				43DF8DB61D77ABBC00F7C9C0 /* PhysicalObject.swift */,
 				43DF8DBA1D77B90A00F7C9C0 /* Car.swift */,
 				43DF8DB81D77B0F700F7C9C0 /* PhysicsHandler.swift */,
@@ -292,6 +295,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43FC0C551E0390D20067C375 /* Network.swift in Sources */,
 				43BF73791D975AAC00EFE1FB /* Joystick.swift in Sources */,
 				433A0F071D8F3A5200F64CA4 /* Ball.swift in Sources */,
 				43FE94EC1D750E3500076646 /* SoccerScene.swift in Sources */,

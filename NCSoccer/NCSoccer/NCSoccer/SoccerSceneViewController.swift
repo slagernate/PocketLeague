@@ -10,6 +10,8 @@ import UIKit
 import SpriteKit
 import GameKit
 
+//var gameState = GameState.findingHost
+
 // Global Variables
 var screenSize: CGSize!
 var gill: String = "Gill Sans"
@@ -20,14 +22,15 @@ var CAM_ZOOM_FACTOR: CGFloat = 1.01
 let findMatchNotificationKey = "findsoccermatch"
 let gcNotEnabledKey = "gcNotEnabled"
 
-	
-class SoccerSceneViewController: UIViewController, GKMatchmakerViewControllerDelegate, GKMatchDelegate {
+let TOTAL_PLAYERS = 2
+
+var gameCenterEnabled: Bool = false
+
+class SoccerSceneViewController: UIViewController, GKMatchmakerViewControllerDelegate {
 
 	// View Size
 	var viewSize: CGSize!
-	var gameCenterEnabled: Bool = false
-	var match: GKMatch!
-	var matchStarted: Bool = false
+	var soccerScene: SoccerScene!
 
 	
     override func viewDidLoad() {
@@ -49,8 +52,9 @@ class SoccerSceneViewController: UIViewController, GKMatchmakerViewControllerDel
 		}
 		*/
 		
-		print("loading view")
 		let scene = MainMenuScene(size: viewSize)
+		soccerScene = SoccerScene(size: viewSize)
+		soccerScene.isPaused = true
 
 		//let scene = MainMenuScene(size: CGSize(width: viewSize.height, height: viewSize.width))
 		
@@ -68,12 +72,11 @@ class SoccerSceneViewController: UIViewController, GKMatchmakerViewControllerDel
         /* Set the scale mode to scale to fit the window */
         scene.scaleMode = .aspectFill
 		
-		print("about to present game scene")
 		skView.presentScene(scene)
 		
     }
-
-    override var shouldAutorotate : Bool {
+	
+	override var shouldAutorotate : Bool {
         return true
     }
 
@@ -96,32 +99,6 @@ class SoccerSceneViewController: UIViewController, GKMatchmakerViewControllerDel
 	
 	
 	
-	//MARK: - GKMatchDelegate Methods
-	func match(_ match: GKMatch, didFailWithError error: Error?) {
-		print("match failed with error: \(error)")
-	}
-	
-	func match(_ match: GKMatch, didReceive data: Data, forRecipient recipient: GKPlayer, fromRemotePlayer player: GKPlayer) {
-		print("data received from \(player.alias) for \(recipient.alias)")
-	}
-	
-	func match(_ match: GKMatch, didReceive data: Data, fromRemotePlayer player: GKPlayer) {
-		print("recieved data from \(player)")
-	}
-	
-	func match(_ match: GKMatch, shouldReinviteDisconnectedPlayer player: GKPlayer) -> Bool {
-		print("match should reinvite disconnected player: \(player.alias)")
-		return false
-	}
-	
-	func match(_ match: GKMatch, player: GKPlayer, didChange state: GKPlayerConnectionState) {
-		print("NATHANSLAGER \(player.alias) changed state to: \(state)")
-		if (match.expectedPlayerCount == 0) {
-			print("NATHANSLAGER: Start match bih")
-		}
-	}
-	
-	
 	
 	//MARK: - GKMatchmakerViewControllerDelegate Methods
 	func matchmakerViewControllerWasCancelled(_ viewController: GKMatchmakerViewController) {
@@ -130,17 +107,16 @@ class SoccerSceneViewController: UIViewController, GKMatchmakerViewControllerDel
 	
 	func matchmakerViewController(_ viewController: GKMatchmakerViewController, didFind match: GKMatch) {
 		print("MMVC found match!")
-		self.match = match
-		match.delegate = self
+		soccerScene.match = match
+		match.delegate = soccerScene
 
-		/*
-		self.dismiss(animated: false, completion: nil)
-		let skView = self.view as! SKView!
-		let scene = SoccerScene(size: viewSize)
-		//hideAds()
-		let pushInDirection = SKTransition.push(with: SKTransitionDirection.left, duration: 0.4)
-		skView?.presentScene(scene, transition:  pushInDirection)
-*/
+		if (match.expectedPlayerCount == 0) {
+			print("Ready to start game!")
+			self.dismiss(animated: false, completion: nil)
+			let skview = self.view as! SKView
+			skview.presentScene(soccerScene)
+		}
+		
 		
 	}
 	
@@ -163,9 +139,9 @@ class SoccerSceneViewController: UIViewController, GKMatchmakerViewControllerDel
 		if (gameCenterEnabled) {
 			
 			let matchRequest = GKMatchRequest()
-			matchRequest.defaultNumberOfPlayers = 2
-			matchRequest.maxPlayers = 2
-			matchRequest.minPlayers = 2
+			matchRequest.defaultNumberOfPlayers = TOTAL_PLAYERS
+			matchRequest.maxPlayers = TOTAL_PLAYERS
+			matchRequest.minPlayers = TOTAL_PLAYERS
 			
 			let matchVC = GKMatchmakerViewController(matchRequest: matchRequest)
 			matchVC?.matchmakerDelegate = self
@@ -179,28 +155,47 @@ class SoccerSceneViewController: UIViewController, GKMatchmakerViewControllerDel
 		}
 	}
 	
+	
+	/* Called when the button "find match" is pressed in MainMenuScene */
+	func startMatch(withHost: GKPlayer?) {
+		let skView = self.view as! SKView!
+		let scene = SoccerScene(size: viewSize)
+		//hideAds()
+		let pushInDirection = SKTransition.push(with: SKTransitionDirection.left, duration: 0.4)
+		skView?.presentScene(scene, transition:  pushInDirection)
+	}
+	
+
 	func setLocalPlayerAuthenticator() {
 		let localPlayer = GKLocalPlayer.localPlayer()
+		/* Setting authenticateHandler immediately spawns a background thread that attempts 
+			to authenticate the local player. This thread calls "localPlayer.authenticateHandler"
+			when it finishes its attempt at authenticating the local player */
 		localPlayer.authenticateHandler = {(viewController : UIViewController?, error : Error?) -> Void in
+			/* Local player not authenticated, show gamecenter login viewController */
 			if ((viewController) != nil) {
 				self.show(viewController!, sender: self)
 			} else if (localPlayer.isAuthenticated) {
-				print("Local p authenticated")
-				self.gameCenterEnabled = true
+				print("Local player authenticated")
+				gameCenterEnabled = true
 			} else {
-				print("local p not authenticated!")
-				self.gameCenterEnabled = false
+				print("gamecenter not enabled. Local player not authenticated!")
+				gameCenterEnabled = false
 				// Turn off gamecenter
 			}
 			
 			if (error != nil) {
 				print("Authentication error: \(error)")
 			}
+			
+			
 		}
 	}
 	
 	func addObservers() {
 		NotificationCenter.default.addObserver(self, selector: #selector(findMatch), name: NSNotification.Name(rawValue: findMatchNotificationKey), object: nil)
+		//NotificationCenter.default.addObserver(self, selector: #selector(findMatch), name: NSNotification.Name(rawValue: findMatchNotificationKey), object: nil)
+
 	}
 	
 	

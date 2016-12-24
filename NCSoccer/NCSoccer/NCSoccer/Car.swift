@@ -23,7 +23,7 @@ class Car: PhysicalObject {
 		
 		/* Temporary initialization.. will have further customization for different classes of cars */
 		let carTexture = SKTexture(imageNamed: "BasicCar")
-		let carWidth = CGFloat(screenSize.width/20)
+		let carWidth = CGFloat(screenSize.width/20)*2.0
 		let carScale = CGFloat(183.0/140.0) // TODO
 		let carSize = CGSize(width: (carWidth*carScale), height: carWidth)
 		
