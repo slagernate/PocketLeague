@@ -20,14 +20,16 @@ let HORIZ_FIELD_ELEMS:	CGFloat = 8
 let fieldElemSize = CGSize(width: FIELD_WIDTH/HORIZ_FIELD_ELEMS, height: FIELD_HEIGHT/VERT_FIELD_ELEMS)
 let cornerTexture = SKTexture(imageNamed: "corner2")
 let edgeTexture = SKTexture(imageNamed: "edge2")
-let goalTexture = SKTexture(imageNamed: "goal")
+let goalTexture = SKTexture(imageNamed: "roundEdgesGoal")
+
+let fieldOrigin = CGPoint(x: fieldElemSize.width/2.0, y: fieldElemSize.height/2.0)
 
 class Field: PhysicalObject {
 	
 	
 	override init(texture: SKTexture!, color: UIColor, size: CGSize) {
 		super.init(texture: texture, color: UIColor.clear, size: size)
-		self.name = "physicalObject"
+		self.name = "fieldObject"
 		
 		// By default, physics objects collide with everything
 	}

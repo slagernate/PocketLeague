@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4335A3F21E16E8FD00E4C488 /* spark.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4335A3F01E16E8FD00E4C488 /* spark.sks */; };
+		4335A3F51E16F43300E4C488 /* flame.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4335A3F41E16F43300E4C488 /* flame.sks */; };
+		4335A3F91E171DC500E4C488 /* roundEdgesGoal.png in Resources */ = {isa = PBXBuildFile; fileRef = 4335A3F81E171DC500E4C488 /* roundEdgesGoal.png */; };
 		4339A1941DD176F700C874D0 /* Field.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4339A1931DD176F700C874D0 /* Field.swift */; };
 		4339A1961DD2B4E100C874D0 /* goal.png in Resources */ = {isa = PBXBuildFile; fileRef = 4339A1951DD2B4E100C874D0 /* goal.png */; };
 		433A0F071D8F3A5200F64CA4 /* Ball.swift in Sources */ = {isa = PBXBuildFile; fileRef = 433A0F061D8F3A5200F64CA4 /* Ball.swift */; };
@@ -43,6 +46,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4335A3F01E16E8FD00E4C488 /* spark.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = spark.sks; path = ../../spark.sks; sourceTree = "<group>"; };
+		4335A3F41E16F43300E4C488 /* flame.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = flame.sks; sourceTree = "<group>"; };
+		4335A3F81E171DC500E4C488 /* roundEdgesGoal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = roundEdgesGoal.png; sourceTree = "<group>"; };
 		4339A1931DD176F700C874D0 /* Field.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Field.swift; sourceTree = "<group>"; };
 		4339A1951DD2B4E100C874D0 /* goal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = goal.png; sourceTree = "<group>"; };
 		433A0F061D8F3A5200F64CA4 /* Ball.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ball.swift; sourceTree = "<group>"; };
@@ -93,6 +99,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4335A3E91E16E24000E4C488 /* Emitter */ = {
+			isa = PBXGroup;
+			children = (
+				4335A3F01E16E8FD00E4C488 /* spark.sks */,
+				4335A3F41E16F43300E4C488 /* flame.sks */,
+			);
+			name = Emitter;
+			sourceTree = "<group>";
+		};
 		433A0F081D8F3C6200F64CA4 /* Balls */ = {
 			isa = PBXGroup;
 			children = (
@@ -104,6 +119,7 @@
 		4340E42C1D974F25004A76FC /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				4335A3E91E16E24000E4C488 /* Emitter */,
 				4391C8CB1DBBDA0D0008FA85 /* Field */,
 				4340E42D1D974F52004A76FC /* ControlButtons */,
 				43DF8DBF1D77C52300F7C9C0 /* Cars */,
@@ -137,6 +153,7 @@
 		4391C8CB1DBBDA0D0008FA85 /* Field */ = {
 			isa = PBXGroup;
 			children = (
+				4335A3F81E171DC500E4C488 /* roundEdgesGoal.png */,
 				4339A1951DD2B4E100C874D0 /* goal.png */,
 				43562B5C1DD152DF0083CC13 /* corner2.png */,
 				43562B5D1DD152DF0083CC13 /* edge2.png */,
@@ -276,11 +293,14 @@
 				43D21C491DA03F400076EE33 /* ball.png in Resources */,
 				43FE94F31D750E3500076646 /* Assets.xcassets in Resources */,
 				43562B5F1DD152DF0083CC13 /* edge2.png in Resources */,
+				4335A3F91E171DC500E4C488 /* roundEdgesGoal.png in Resources */,
+				4335A3F21E16E8FD00E4C488 /* spark.sks in Resources */,
 				43D21C441DA03D970076EE33 /* throttle_base.png in Resources */,
 				4391C8D01DBBDA0D0008FA85 /* Corner.png in Resources */,
 				43562B5E1DD152DF0083CC13 /* corner2.png in Resources */,
 				43FE94F11D750E3500076646 /* Main.storyboard in Resources */,
 				43D21C4F1DA041FD0076EE33 /* joyStick@2000x2000.png in Resources */,
+				4335A3F51E16F43300E4C488 /* flame.sks in Resources */,
 				4391C8D11DBBDA0D0008FA85 /* Corner.xcf in Resources */,
 				43D21C451DA03D970076EE33 /* throttle.png in Resources */,
 				43D21C501DA041FD0076EE33 /* joyStickBase@3000x3000.png in Resources */,

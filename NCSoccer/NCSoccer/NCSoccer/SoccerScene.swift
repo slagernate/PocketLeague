@@ -20,7 +20,7 @@ enum GameState {
 
 class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 	
-	var car1: Car!
+	var localCar: Car!
 	var ball: Ball!
 	
 	// Controls
@@ -31,25 +31,27 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 	var throttle: Throttle!
 	#endif
 	
-	var cam: SKCameraNode!
 	var camObjects = SKNode()
 	var innerCamPadding: CGFloat!
 	var outerCamPadding: CGFloat!
 	
+	var cam = SKCameraNode()
+	
 	//var network: Network! // TODO: factor Network code into a class
-	var recieveBuffer: UnsafeMutableBufferPointer<Any>!
+	//var recieveBuffer: UnsafeMutableBufferPointer<Any>!
 	var match: GKMatch!
-	var gameState: GameState = GameState.findingHost
-	var host: Bool = false
+	var gameState = GameState.findingHost
 	var hostID: String?
 	
-	//var hostID: String!
 	var hostingMatch: Bool = false
 	
-	//var randomNumber = arc4random()
-	
-	var playerDict = [String: UInt32]()
+	var randomNumbers = [String: UInt32]()
 	var localPlayerID: String?
+	
+	var updateCounter = 0
+	
+	var oneSecondTimer: Timer!
+	var gam
 	
     override func didMove(to view: SKView) {
 		
@@ -69,20 +71,26 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 		
 		loadField()
 		
-		// Corner
 		
-		//let corner = SKSpriteNode(
+		localPlayerID = GKLocalPlayer.localPlayer().playerID
+		randomNumbers["\(localPlayerID!)"] = arc4random()
+		
+		print(" size of randomNumbers: \(randomNumbers.count)")
+		
+
+		localCar = Car()
+		localCar.playerID = localPlayerID
+		self.addChild(localCar)
 		
 		
-		
+		ball = Ball()
 
 		// Camera
 		cam = SKCameraNode()
-		cam.setScale(CAM_SCALE)
 		self.camera = cam
+		cam.setScale(CAM_SCALE)
+		cam.position = CGPoint(x: FIELD_WIDTH/2.0, y: FIELD_HEIGHT/2.0)
 		self.addChild(cam)
-		// Cam start pos
-		cam.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
 		
 		// Controls
 		
@@ -99,13 +107,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 		cam.addChild(throttle)
 		#endif
 		
-		localPlayerID = GKLocalPlayer.localPlayer().playerID
-		playerDict["\(localPlayerID!)"] = arc4random()
 		
-		print(" size of playerDict: \(playerDict.count)")
-
-		
-		self.isPaused = true
 		/*
 		if (gameCenterEnabled) {
 			self.match.chooseBestHostingPlayer(completionHandler: {(player: GKPlayer?) -> Void in
@@ -120,6 +122,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 */
 	}
 	
+	// MARK: - Starting the Game     
 	
 	func loadField() {
 		// Field
@@ -136,8 +139,8 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 		
 		// Construct field
 		let fieldElemLen = fieldElemSize.width
+		var startingPos = fieldOrigin
 		//var startingPos = CGPoint(x: (-FIELD_WIDTH/2.0) + (fieldElemLen/2.0), y: (-FIELD_WIDTH/2.0) + (fieldElemLen/2.0))
-		var startingPos = CGPoint.zero
 		let xElems = UInt(HORIZ_FIELD_ELEMS-1)
 		let yElems = UInt(VERT_FIELD_ELEMS-1)
 		
@@ -150,8 +153,8 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 						southWestCorner.zRotation += CGFloat(M_PI)
 						self.addChild(southWestCorner)
 					} else if y == yElems/2 {
-						//let westGoal = Goal(spawnPosition: CGPoint(x: startingPos.x, y: startingPos.y + (fieldElemLen * CGFloat(y))))
-						//self.addChild(westGoal)
+						let westGoal = Goal(spawnPosition: CGPoint(x: startingPos.x-(fieldElemLen*0.9), y: startingPos.y + (fieldElemLen * CGFloat(y))))
+						self.addChild(westGoal)
 					} else if y == yElems {
 						let northWestCorner = Corner(spawnPosition: CGPoint(x: startingPos.x, y: startingPos.y + (fieldElemLen * CGFloat(y))))
 						northWestCorner.zRotation += CGFloat(M_PI/2.0)
@@ -165,11 +168,12 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 					if y == 0 {
 						startingPos.x = startingPos.x + (fieldElemLen * CGFloat(x))
 						let southEastCorner = Corner(spawnPosition: startingPos)
-						southEastCorner.zRotation -= CGFloat(M_PI * 0.5)
+						southEastCorner.zRotation -= CGFloat(M_PI/2.0)
 						self.addChild(southEastCorner)
 					} else if y == yElems/2 {
-						//let eastGoal = Goal(spawnPosition: CGPoint(x: startingPos.x, y: startingPos.y + (fieldElemLen * CGFloat(y))))
-						//self.addChild(eastGoal)
+						let eastGoal = Goal(spawnPosition: CGPoint(x: startingPos.x + (fieldElemLen*0.9), y: startingPos.y + (fieldElemLen * CGFloat(y))))
+						eastGoal.zRotation += CGFloat(M_PI)
+						self.addChild(eastGoal)
 					} else if y == yElems {
 						let northEastCorner = Corner(spawnPosition: CGPoint(x: startingPos.x, y: startingPos.y + (fieldElemLen * CGFloat(y))))
 						self.addChild(northEastCorner)
@@ -188,27 +192,73 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 						self.addChild(northEdge)
 					}
 				}
-				
-				
 			}
 		}
 	}
-
+	
 	func startGame() {
 		
+		var camStartPos: CGPoint!
+		let setPosition: (SKNode?, UnsafeMutablePointer<ObjCBool>) -> Void = {
+			(node, NilLiteralConvertible) -> Void in
+			if let car = node as? Car {
+				car.exhaust.targetNode = self
+				var xOffset = FIELD_WIDTH/2.0
+				var yawOffset = CGFloat(M_PI)
+				if car.playerID == self.hostID {
+					xOffset = 0
+					yawOffset = 0
+				}
+				
+				if car.playerID == self.localCar.playerID {
+					camStartPos = self.localCar.position
+				}
+				
+				let carSpawnSpot = CGPoint(x: FIELD_WIDTH/4.0 + xOffset, y: FIELD_HEIGHT/2.0)
+				car.position = carSpawnSpot
+				car.zRotation = car.zRotation + yawOffset
+			
+			}
+		}
 		
-		// Add a car
-		let carSpawnSpot = CGPoint(x: 50, y: frame.midY)
-		car1 = Car(spawnPosition: carSpawnSpot)
-		addChild(car1)
+		self.enumerateChildNodes(withName: "^car$", using: setPosition)
+		
+		
+		self.cam.position = camStartPos
 		
 		// Add ball
-		let ballSpawnSpot = CGPoint(x: frame.midX*1.5, y: frame.midY)
-		self.ball = Ball(spawnPosition: ballSpawnSpot)
-		addChild(ball)
+		let ballSpawnSpot = CGPoint(x: FIELD_WIDTH/2.0, y: FIELD_HEIGHT/2.0)
+		ball.position = ballSpawnSpot
+		self.addChild(ball)
 		
+		// startAnimation()
 		
 	}
+
+	/* 	/
+	
+	/// Animation
+	
+	Example of adding text to game. Use this to show countdown: 3... 2... 1... START! at beginning of game.
+
+	func startAnimation() {
+		let pointsLabel = SKLabelNode(text: "\(amount)")
+		pointsLabel.position = killSpot
+		pointsLabel.fontColor = UIColor.orange
+		pointsLabel.fontName = gillI
+		pointsLabel.fontSize = screenSize.width/40.0
+		self.addChild(pointsLabel)
+		let moveLabelAction = SKAction.move(by: CGVector(dx: 0, dy: screenSize.width/20.0), duration: 1.5)
+		let fadeOut = SKAction.fadeOut(withDuration: 1.5)
+		let deleteLabelAction = SKAction.run() {
+			pointsLabel.removeFromParent()
+		}
+		
+		let fade = SKAction.group([moveLabelAction, fadeOut])
+		pointsLabel.run(SKAction.sequence([fade, deleteLabelAction]))
+	}
+	
+	*/
 	
 	// MARK: - Touch Handling
 	
@@ -228,14 +278,15 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 					self.cam.addChild(joyStick)
 				}
 				
-				joyStick.steerTowards(position: touch)
+				let motion = joyStick.steerTowards(position: touch)
+				localCar.steeringMagnitudeRatio = motion.mag
+				localCar.steeringAngle = motion.angle
 				steering += 1
 			}
-			
 		}
 		
 		if steering > 0 {
-			car1.steering = true
+			localCar.steering = true
 		}
 	}
 	
@@ -263,14 +314,16 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 				}
 				#endif
 				
-				joyStick.steerTowards(position: touch)
+				let motion = joyStick.steerTowards(position: touch)
+				localCar.steeringMagnitudeRatio = motion.mag
+				localCar.steeringAngle = motion.angle
 				steering += 1
 			}
 		}
 		
 			
 		if steering > 0 {
-			car1.steering = true
+			localCar.steering = true
 		}
 	}
 	
@@ -281,22 +334,48 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 			if !(testNode?.name == "throttlebase" || testNode?.name == "throttle") {
 				if (self.cam.childNode(withName: "joystick") != nil) {
 					self.joyStick.removeFromParent()
-					car1.steering = false
+					localCar.steeringMagnitudeRatio = 0
+					localCar.steeringAngle = 0
+					localCar.steering = false
+					localCar.physicsBody?.angularVelocity = 0
 				}
 			}
 		}
-		
 	}
 	
 	// MARK: - Physics Handling
 	func didBegin(_ contact: SKPhysicsContact) {
-		if ((contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask) & (PhysicsCategory.Car) == PhysicsCategory.Car) {
-			car1.collided = true
+		if ((contact.bodyA.categoryBitMask & contact.bodyB.categoryBitMask) & (PhysicsCategory.Car) == PhysicsCategory.Car) {
+			if let carA = contact.bodyA.node as? Car {
+				carA.collided = true
+			}
+			if let carB = contact.bodyB.node as? Car {
+				carB.collided = true
+			}
 		}
+		
+		// Nudge car away from wall
+//		if ((contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask) == PhysicsCategory.Car | PhysicsCategory.Boards) {
+//			var car: Car!
+//			if let carA = contact.bodyA.node as? Car {
+//				car = carA
+//			}
+//			if let carB = contact.bodyB.node as? Car {
+//				car = carB
+//			}
+//			
+//			if car != nil {
+//				if (car.physicsBody?.isResting)! {
+//				car.physicsBody?.applyImpulse(contact.contactNormal)
+//				}
+//			} else {
+//				print("car collided with wall but was unable to be retrieved in didBegin() function")
+//			}
+//		}
 	}
 	
-	func resetBall(pos: CGPoint) {
-		ball.position = pos
+	func resetBall() {
+		ball.position = CGPoint(x: FIELD_WIDTH/2.0, y: FIELD_HEIGHT/2.0)
 		ball.physicsBody?.velocity.dx = 0
 		ball.physicsBody?.velocity.dy = 0
 		ball.physicsBody?.angularVelocity = 0
@@ -305,71 +384,90 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 	// MARK: - Frame Cycle
     override func update(_ currentTime: TimeInterval) {
 		
-		let centerField = CGPoint(x: ((FIELD_WIDTH - fieldElemSize.width/2.0))/2.0,
-		                    y: (FIELD_HEIGHT - fieldElemSize.height/2.0)/2.0)
 		
-		if ball.position.x > (FIELD_WIDTH - fieldElemSize.width/2.0) {
-			resetBall(pos: centerField)
-		} else if ball.position.x < (-fieldElemSize.width/2.0) {
-			resetBall(pos: centerField)
+		if (ball.position.x > (FIELD_WIDTH)) || (ball.position.x < 0) {
+			resetBall()
 		}
 		
 		let updateCar: (SKNode?, UnsafeMutablePointer<ObjCBool>) -> Void = {
 			(node, NilLiteralConvertible) -> Void in
-			if let car = self.car1 {
+			if let car = node as? Car {
+				
+				
 				let carVelocity = car.physicsBody?.velocity
 				let carVelocityMag = hypot((carVelocity?.dx)!, (carVelocity?.dy)!)
-				let carMass = (car.physicsBody?.mass)! * CGFloat(4)
-				#if THROTTLE
-				let force = CGVector(dx: (CGFloat(cos(car.zRotation)) * self.throttle.thrustRatio() * carMass),
-				                     dy: (CGFloat(sin(car.zRotation)) * self.throttle.thrustRatio() * carMass))
-				#else
-				let force = CGVector(dx: (CGFloat(cos(car.zRotation)) * self.joyStick.steeringMagnitudeRatio * carMass),
-					                     dy: (CGFloat(sin(car.zRotation)) * self.joyStick.steeringMagnitudeRatio * carMass))
-				#endif
-				if (carVelocityMag < (car.MAXCARSPEED)) {
-					car.physicsBody?.applyImpulse(force)
+
+				if (car.steering) {
+					car.steerTowards(direction: car.steeringAngle)
+										let massMultiplier: CGFloat = 4
+					let carMass = (car.physicsBody?.mass)! * massMultiplier
+					#if THROTTLE
+					let force = CGVector(dx: (CGFloat(cos(car.zRotation)) * self.throttle.thrustRatio() * carMass),
+										 dy: (CGFloat(sin(car.zRotation)) * self.throttle.thrustRatio() * carMass))
+					#else
+					let force = CGVector(dx: (CGFloat(cos(car.zRotation)) * car.steeringMagnitudeRatio * carMass),
+										 dy: (CGFloat(sin(car.zRotation)) * car.steeringMagnitudeRatio * carMass))
+					#endif
+					if (carVelocityMag < (car.MAXCARSPEED)) {
+						car.physicsBody?.applyImpulse(force)
+					}
 					
+					car.exhaust.particleBirthRate = 100
+//					if car.childNode(withName: "exhaust") == nil {
+//						car.addChild(car.exhaust)
+//					}
+				} else {
+					car.exhaust.particleBirthRate = 0
 				}
 				
-				/*
+				
 				if (car.collided) {
-					car.collided = false
 					car.collisionCoolDown = true
-					car.collideTime = 1
+					car.collided = false
+					car.collideTime = 0
 				}
-				else if (car.collisionCoolDown) {
+				
+				
+				if (car.collisionCoolDown) {
+					car.collideTime += 1
 					if (car.collideTime > car.driftTime) {
 						car.collisionCoolDown = false
 						car.collideTime = 0
 					}
-					car.collideTime += 1
 				} else {
-					car.collideTime = 100
-				}
-				*/
-
-				// Converts spaceship movement to car movement by offsetting lateral velocity
-				
-				let driftDiff = atan2((carVelocity?.dy)!, (carVelocity?.dx)!) - (car.zRotation)
-
-				let lateralMomentum = sin(driftDiff) * carVelocityMag * (car.physicsBody?.mass)! * CGFloat(1.1)
-				
-				let normalZRotation = CGFloat(M_PI/2.0)
-
-				let lateralMomentumVecAngle = (car.zRotation) - normalZRotation
-				
-				let lateralMomentumVec = CGVector(dx: cos(lateralMomentumVecAngle) * lateralMomentum,
-												  dy: sin(lateralMomentumVecAngle) * lateralMomentum)
-				car.physicsBody?.applyImpulse(lateralMomentumVec)
-				
-				
-				
-				if (car.steering) {
-					car.steerTowards(direction: self.joyStick.steeringAngle)
+					//// Converts spaceship movement to car movement by offsetting lateral velocity
+					let driftDiff = atan2((carVelocity?.dy)!, (carVelocity?.dx)!) - (car.zRotation)
+					let multiplier: CGFloat = 1.1
+					let lateralMomentum = sin(driftDiff) * carVelocityMag * (car.physicsBody?.mass)! * multiplier
+					let normalZRotation = CGFloat(M_PI/2.0)
+					let lateralMomentumVecAngle = (car.zRotation) - normalZRotation
+					let lateralMomentumVec = CGVector(dx: cos(lateralMomentumVecAngle) * lateralMomentum,
+					                                  dy: sin(lateralMomentumVecAngle) * lateralMomentum)
+					car.physicsBody?.applyImpulse(lateralMomentumVec)
 				}
 				
-								// Mirror boundaries
+				// Nudge car away from boards if stuck
+//				let carContacts = car.physicsBody?.allContactedBodies()
+//				if carContacts != nil {
+//					var contacts = 0
+//					for body in carContacts! {
+//						if body.node?.name == "(^corner$|^edge$|^goal$)" {
+//							contacts += 1
+//						}
+//						if contacts > 0 {
+//							if (car.physicsBody?.isResting)! {
+//							let centeringVector = CGVector(dx: (FIELD_WIDTH - car.position.x)/(FIELD_WIDTH) * 2.0, dy: (FIELD_HEIGHT - car.position.y)/(FIELD_HEIGHT) * 2.0)
+//							car.physicsBody?.applyImpulse(centeringVector)
+//							}
+//						}
+//					}
+//				}
+				
+				
+				//print("steeringMagRatio = \(car.steeringMagnitudeRatio)")
+				//print("steeringAngle = \(car.steeringAngle)")
+				
+				// Mirror boundaries
 				/*
 				if car.position.x > (self.frame.width + car.diagonalLength/2.0) {
 					car.position.x = 0
@@ -382,7 +480,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 					car.position.y = self.frame.height
 				}
 */
-			
+				
 				}
 		}
 		self.enumerateChildNodes(withName: "car", using: updateCar)
@@ -392,7 +490,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 	override func didFinishUpdate() {
 		/* Last method called before scene is rendered */
 		
-		checkNetwork()
+		sendNetworkMessages()
 		
 		//// Check if objects are inside camera node
 
@@ -526,8 +624,26 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 	
 	
 	// MARK: - Network
-
-	func checkNetwork() {
+/*
+	let queue = DispatchQueue(label: "com.soccer.network")
+	
+	queue.async {
+	
+		sendNetworkMessages()
+	
+	}
+*/
+/*
+	// Move to a background thread to do some long running work
+	DispatchQueue.global(attributes: .qosUserInitiated).async {
+	let image = self.loadOrGenerateAnImage()
+	// Bounce back to the main thread to update the UI
+	DispatchQueue.main.async {
+	self.imageView.image = image
+	}
+	}
+	*/
+	func sendNetworkMessages() {
 		/*
 		guard (buffer != nil) else {
 			return
@@ -538,9 +654,9 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 		case .findingHost:
 			
 			var randomNumberMessage = RandomNumberMessage()
-			let randomInteger = playerDict["\(localPlayerID!)"]
-			print("sending our random number, \(randomInteger)")
-			randomNumberMessage.randomNumber = randomInteger
+			let randomInteger = randomNumbers["\(localPlayerID!)"]
+			//print("sending our random number, \(randomInteger)")
+			randomNumberMessage.randomNumber = randomInteger!
 
 			let buffer = UnsafeBufferPointer(start: &randomNumberMessage, count: 1)
 			var data = Data()
@@ -548,7 +664,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 			do {
 				try self.match.sendData(toAllPlayers: data, with: GKMatchSendDataMode.reliable)
 			} catch {
-				print("sendData() failed")
+				//print("sendData() failed")
 			}
 			
 			/*
@@ -582,10 +698,87 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 		
 			break
 		case .hostFound:
+			startGame()
+			gameState = .started
 			break
 		case .readyToStart:
 			break
 		case .started:
+			
+			
+			
+			
+			
+			if (hostingMatch) {
+				var ballUpdateMessage = BallUpdateMessage()
+				ballUpdateMessage.messageType = .ballUpdateMessage
+				ballUpdateMessage.positionX = package(data: ball.position.x, conversion: positionConversion)
+				ballUpdateMessage.positionY = package(data: ball.position.y, conversion: positionConversion)
+				ballUpdateMessage.velocityX = package(data: (ball.physicsBody?.velocity.dx)!, conversion: positionConversion)
+				ballUpdateMessage.velocityY = package(data: (ball.physicsBody?.velocity.dy)!, conversion: positionConversion)
+				ballUpdateMessage.angularVelocity = package(data: (ball.physicsBody?.angularVelocity)!, conversion: generalConversion)
+				let BUMbuffer = UnsafeBufferPointer(start: &ballUpdateMessage, count: 1)
+				var BUMdata = Data()
+				BUMdata.append(BUMbuffer)
+				
+				do {
+					try self.match.sendData(toAllPlayers: BUMdata, with: GKMatchSendDataMode.unreliable)
+				} catch {
+					//print("sendData() failed")
+				}
+				
+				let sendCarUpdates: (SKNode?, UnsafeMutablePointer<ObjCBool>) -> Void = {
+					(node, NilLiteralConvertible) -> Void in
+					if let car = node as? Car {
+						var carUpdateMessage = CarUpdateMessage()
+						carUpdateMessage.messageType = .carUpdateMessage
+						let intID = integerFrom(str: car.playerID)!
+						carUpdateMessage.lower32PlayerID = lowerU32(int: intID)
+						carUpdateMessage.upper32PlayerID = upperU32(int: intID)
+						carUpdateMessage.positionX = package(data: car.position.x, conversion: positionConversion)
+						carUpdateMessage.positionY = package(data: car.position.y, conversion: positionConversion)
+						carUpdateMessage.velocityX = package(data: (car.physicsBody?.velocity.dx)!, conversion: positionConversion)
+						carUpdateMessage.velocityY = package(data: (car.physicsBody?.velocity.dy)!, conversion: positionConversion)
+						carUpdateMessage.zRotation = package(data: car.zRotation, conversion: generalConversion)
+						carUpdateMessage.angularVelocity = package(data: (car.physicsBody?.angularVelocity)!, conversion: generalConversion)
+						let CUMbuffer = UnsafeBufferPointer(start: &carUpdateMessage, count: 1)
+						var CUMdata = Data()
+						CUMdata.append(CUMbuffer)
+						
+						do {
+							try self.match.sendData(toAllPlayers: CUMdata, with: GKMatchSendDataMode.unreliable)
+						} catch {
+							//print("sendData() failed")
+						}
+					}
+				}
+				
+				self.enumerateChildNodes(withName: "^car$", using: sendCarUpdates)
+			
+			} else {
+				
+				var controlInputMessage = ControlInputMessage()
+				controlInputMessage.messageType = .controlInputMessage
+				controlInputMessage.steeringMagnitudeRatio = package(data: localCar.steeringMagnitudeRatio, conversion: generalConversion)
+				controlInputMessage.steeringAngle = package(data: localCar.steeringAngle, conversion: generalConversion)
+				controlInputMessage.steering = localCar.steering
+				let CIMbuffer = UnsafeBufferPointer(start: &controlInputMessage, count: 1)
+				var data = Data()
+				data.append(CIMbuffer)
+				
+				do {
+					try self.match.sendData(toAllPlayers: data, with: GKMatchSendDataMode.unreliable)
+				} catch {
+					//print("sendData() failed")
+				}
+				
+
+			}
+			//counter = 0
+			//}
+			
+			
+				
 			break
 		case .paused:
 			break
@@ -593,142 +786,175 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 			break
 			
 		}
-	} // checkNetwork()
+	} // sendNetworkMessages()
 	
 	
 	
 	
-	
-	
-	
-	func handleReceivedData(data: Data, forRecipient recipient: GKPlayer? = nil, fromRemotePlayer sender: GKPlayer) {
+	func receiveMessage(data: Data, forRecipient recipient: GKPlayer? = nil, fromRemotePlayer sender: GKPlayer) {
 		
 		var messageType = MessageType.invalid
 		let messageTypeBuffer = UnsafeMutableBufferPointer(start: &messageType, count: 1)
 		let _ = data.copyBytes(to: messageTypeBuffer)
-		print("handling \(messageType) data")
+		//print("handling \(messageType) data")
 
 		
 		switch (gameState) {
 		case .findingHost:
 			
 			
-			print("finding host....")
+			//print("finding host....")
 			
 			switch(messageType) {
 			case .randomNumberMessage:
 				print("random number received!")
 				// Unravel message
 				var randomNumberMessage = RandomNumberMessage()
-				let buffer = UnsafeMutableBufferPointer(start: &randomNumberMessage, count: 1)
-				let _ = data.copyBytes(to: buffer)
+				let RNMbuffer = UnsafeMutableBufferPointer(start: &randomNumberMessage, count: 1)
+				let _ = data.copyBytes(to: RNMbuffer)
 				
 				// Add random number to player:randomNumber dictionary
 				//print("recvd message from unique player: \(sender.playerID)")
 				if let id = sender.playerID {
-					if (playerDict["\(id)"] == nil) {
-						print("Dict current contents:")
-						
-						for (key, value) in playerDict {
-							print("key: \(key), value: \(value)")
-						}
-						
-						print("adding random number: \(randomNumberMessage.randomNumber) with key: \(id)")
-						
-						playerDict["\(id)"] = randomNumberMessage.randomNumber
-						print(" size of playerDict: \(playerDict.count)")
+					
+					
+					if (randomNumbers["\(id)"] == nil) {
+						let car = Car()
+						car.playerID = id
+						self.addChild(car)
 					}
+					
+					//print("Dict current contents:")
+					
+//					for (key, value) in randomNumbers {
+//						print("key: \(key), value: \(value)")
+//					}
+					
+					//print("adding random number: \(randomNumberMessage.randomNumber) with key: \(id)")
+					
+					randomNumbers["\(id)"] = randomNumberMessage.randomNumber
+					//print(" size of randomNumbers: \(randomNumbers.count)")
+					
 				}
 				
-				// Send out our random number (otherwise we might not ever send ours if this executes before checkNetwork())
+				// Send out this device's random number (otherwise we might not ever send ours if this executes before sendNetworkMessages())
 				var randomNumberMessageRespone = RandomNumberMessage()
-				randomNumberMessageRespone.randomNumber = playerDict[localPlayerID!]
+				randomNumberMessageRespone.randomNumber = randomNumbers["\(localPlayerID!)"]!
 				let responseBuffer = UnsafeBufferPointer(start: &randomNumberMessageRespone, count: 1)
 				var responseData = Data()
 				responseData.append(responseBuffer)
 				do {
 					try self.match.sendData(toAllPlayers: responseData, with: GKMatchSendDataMode.reliable)
 				} catch {
-					print("sendData() failed")
+					//print("sendData() failed")
 				}
 
-				// If all player's random numbers received then we're ready to start
-				if (playerDict.count == TOTAL_PLAYERS) {
-					hostID = keyMinValue(dict: playerDict)
-					if (hostID == localPlayerID) {
-						hostingMatch = true
-						print("we are hosting")
+				// If all players' random numbers received, then we're ready to start
+				if (randomNumbers.count == TOTAL_PLAYERS) {
+					hostID = keyMinValue(dict: randomNumbers)
+					if (hostID != nil) {
+						if (hostID == localPlayerID!) {
+							hostingMatch = true
+							print("we are hosting")
+						}
+						print("match started")
+						gameState = .hostFound
+					} else { // Two devices generated the same random number
+						// Choose new random number for this device
+						// Reset randomNumbers
+						randomNumbers = ["\(localPlayerID!)": arc4random()]
 					}
-					print("match started")
-					gameState = .started
 				}
 				
 				break
-			case .hostAcknowledged:
-				print("host acknowledged message received")
-				if (hostingMatch) {
-					gameState = GameState.started
-					print("Game started on host")
-				}
-				break
-			case .hostIdentifier:
-				print("host identifier message received")
-				hostID = sender.playerID
-				var hostAcknowledgedMessage = HostAcknowledgedMessage()
-				let buffer = UnsafeBufferPointer(start: &hostAcknowledgedMessage, count: 1)
-				var ack = Data()
-				ack.append(buffer)
-				do {
-					try self.match.sendData(toAllPlayers: ack, with: GKMatchSendDataMode.unreliable)
-					gameState = GameState.started
-				} catch {
-					print("Sending ack failed!")
-				}
-				print("Slave ready!")
+				
 			default:
+				print("recieved message type other than randomNumberMessage while attempting to find host")
 				break
-				
 			}
 			
-			/*
-			if (hostingMatch) {
-				var hostFoundMessage = MessageFromHost()
-				let buffer = UnsafeBufferPointer(start: &hostFoundMessage, count: 1)
-				var data = Data()
-				data.append(buffer)
-				do {
-					try self.match.sendData(toAllPlayers: data, with: GKMatchSendDataMode.unreliable)
-				} catch {
-					print("sendData() failed")
-				}
-			}
-			/*
-			if (player?.playerID == GKLocalPlayer.localPlayer().playerID) {
-			var hostFoundMessage = (messageType: MessageType.hostIdentifier, hostID: player?.playerID)
-			let buffer = UnsafeBufferPointer(start: &hostFoundMessage, count: 1)
-			} else {
-			
-			}
-			
-			
-			var data = Data()
-			data.append(buffer)
-			self.match.sendData(toAllPlayers: data, with: GKMatchSendDataMode.unreliable)
-			
-			})
-			*/
-*/
 		case .hostFound:
 			break
 		case .readyToStart:
 			break
 		case .started:
+			
+			switch(messageType) {
+			case .controlInputMessage:
+
+				var controlInputMessage = ControlInputMessage()
+				let CIMbuffer = UnsafeMutableBufferPointer(start: &controlInputMessage, count: 1)
+				let _ = data.copyBytes(to: CIMbuffer)
+
+				let controlCar: (SKNode?, UnsafeMutablePointer<ObjCBool>) -> Void = {
+					(node, NilLiteralConvertible) -> Void in
+					if let car = node as? Car {
+						if car.playerID == sender.playerID {
+							car.steeringMagnitudeRatio = unpackage(data: controlInputMessage.steeringMagnitudeRatio, conversion: generalConversion)
+							car.steeringAngle = unpackage(data: controlInputMessage.steeringAngle, conversion: generalConversion)
+							car.steering = controlInputMessage.steering
+						}
+					}
+				}
+				
+				self.enumerateChildNodes(withName: "^car$", using: controlCar)
+				break
+			case .ballUpdateMessage:
+				var ballUpdateMessage = BallUpdateMessage()
+				let BUMbuffer = UnsafeMutableBufferPointer(start: &ballUpdateMessage, count: 1)
+				let _ = data.copyBytes(to: BUMbuffer)
+				
+				ball.position.x = unpackage(data: ballUpdateMessage.positionX, conversion: positionConversion)
+				ball.position.y = unpackage(data: ballUpdateMessage.positionY, conversion: positionConversion)
+				ball.physicsBody?.velocity.dx = unpackage(data: ballUpdateMessage.velocityX, conversion: positionConversion)
+				ball.physicsBody?.velocity.dy = unpackage(data: ballUpdateMessage.velocityY, conversion: positionConversion)
+				ball.physicsBody?.angularVelocity = unpackage(data: ballUpdateMessage.angularVelocity, conversion: generalConversion)
+
+			case .carUpdateMessage:
+				
+				var carUpdateMessage = CarUpdateMessage()
+				let CUMbuffer = UnsafeMutableBufferPointer(start: &carUpdateMessage, count: 1)
+				let _ = data.copyBytes(to: CUMbuffer)
+				
+				//print("received carUpdateMessage")
+				let receiveCarUpdate: (SKNode?, UnsafeMutablePointer<ObjCBool>) -> Void = {
+					(node, NilLiteralConvertible) -> Void in
+					if let car = node as? Car {
+						let intID = mergeU64From(lower: carUpdateMessage.lower32PlayerID, upper: carUpdateMessage.upper32PlayerID)
+						let id = playerIDFrom(int: intID)
+						//print("received id: \(id), actual id: \(car.playerID!)")
+						if (car.playerID! == id) {
+							//print("Applied car update message to car!")
+							car.position.x = unpackage(data: carUpdateMessage.positionX, conversion: positionConversion)
+							car.position.y = unpackage(data: carUpdateMessage.positionY, conversion: positionConversion)
+							car.physicsBody?.velocity.dx = unpackage(data: carUpdateMessage.velocityX, conversion: positionConversion)
+							car.physicsBody?.velocity.dy = unpackage(data: carUpdateMessage.velocityY, conversion: positionConversion)
+							car.physicsBody?.angularVelocity = unpackage(data: carUpdateMessage.angularVelocity, conversion: generalConversion)
+							car.zRotation = unpackage(data: carUpdateMessage.zRotation, conversion: generalConversion)
+							
+						}
+					}
+				}
+				
+				self.enumerateChildNodes(withName: "^car$", using: receiveCarUpdate)
+
+//				
+//				localCar.position.x = unpackage(data: carUpdateMessage.positionX, conversion: positionConversion)
+//				localCar.position.y = unpackage(data: carUpdateMessage.positionY, conversion: positionConversion)
+//				localCar.physicsBody?.velocity.dx = unpackage(data: carUpdateMessage.velocityX, conversion: positionConversion)
+//				localCar.physicsBody?.velocity.dy = unpackage(data: carUpdateMessage.velocityY, conversion: positionConversion)
+				//localCar.physicsBody?.angularVelocity = unpackage(data: carUpdateMessage.angularVelocity, conversion: generalConversion)
+				
+			default:
+				break
+			}
+			
 			break
 		case .paused:
 			break
 		case .ended:
 			break
-		
+
 		}
 	}
 	
@@ -751,6 +977,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 			break
 			
 		case GKPlayerConnectionState.stateUnknown:
+			print("Player connection state unknown")
 			break
 			
 		}
@@ -759,14 +986,14 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 	
 	func match(_ match: GKMatch, didReceive data: Data, forRecipient recipient: GKPlayer, fromRemotePlayer player: GKPlayer) {
 		if (self.match != match) { return }
-		handleReceivedData(data: data, forRecipient: recipient, fromRemotePlayer: player)
+		receiveMessage(data: data, forRecipient: recipient, fromRemotePlayer: player)
 		//print("received data from \(player.alias) for \(recipient.alias)")
 	}
 	
 	func match(_ match: GKMatch, didReceive data: Data, fromRemotePlayer player: GKPlayer) {
 		if (self.match != match) { return }
-		handleReceivedData(data: data, fromRemotePlayer: player)
-		print("recieved data from \(player)")
+		receiveMessage(data: data, fromRemotePlayer: player)
+		//print("recieved data from \(player)")
 	}
 	
 	func match(_ match: GKMatch, shouldReinviteDisconnectedPlayer player: GKPlayer) -> Bool {
@@ -782,22 +1009,6 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 		print("match failed with error: \(error)")
 	}
 	
-	
-	
 
 
 }
-
-
-func keyMinValue(dict: [String: UInt32]) -> String? {
-	
-	// Note that this doesn't accoutn for duplicate minimums
-	for (key, value) in dict {
-		if value == dict.values.min() {
-			return key
-		}
-	}
-	
-	return nil
-}
-

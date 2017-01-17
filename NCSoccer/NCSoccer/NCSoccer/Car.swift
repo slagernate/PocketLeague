@@ -12,19 +12,26 @@ class Car: PhysicalObject {
 
 	let MAXCARSPEED: CGFloat = 500
 	let CARMASS: CGFloat = 50
+	
 	var steering: Bool
+	var steeringMagnitudeRatio: CGFloat = 0
+	var steeringAngle: CGFloat = 0
+	
 	var diagonalLength: CGFloat
 	var collided: Bool = false
 	var collisionCoolDown: Bool = false
-	var driftTime: UInt64 = 100
+	var driftTime: UInt64 = 25
 	var collideTime: UInt64 = 0
+	var exhaust: SKEmitterNode!
 	
-	init(spawnPosition: CGPoint) {
+	var playerID: String!
+	
+	init() {
 		
 		/* Temporary initialization.. will have further customization for different classes of cars */
 		let carTexture = SKTexture(imageNamed: "BasicCar")
 		let carWidth = CGFloat(screenSize.width/20)*2.0
-		let carScale = CGFloat(183.0/140.0) // TODO
+		let carScale = CGFloat(183.0/140.0) 
 		let carSize = CGSize(width: (carWidth*carScale), height: carWidth)
 		
 		// Initialize movement variables
@@ -33,31 +40,36 @@ class Car: PhysicalObject {
 		
 		//self.steerRight = false
 		//self.steerLeft = false
+
 		
 		super.init(texture: carTexture, color: UIColor.clear, size: carSize)
 		
 		
 		self.speed = CGFloat(MAXCARSPEED)
-		self.position = spawnPosition
 		self.name = "car"
 		
 		//Physics Setup
 		//self.physicsBody = SKPhysicsBody(edgeLoopFromRect: CGRect(origin: spawnPosition, size: carSize) )
 		let carPhysicsSize = CGSize(width: self.size.width, height: self.size.height)
 		self.physicsBody = SKPhysicsBody(rectangleOf: carPhysicsSize)
-		self.physicsBody?.mass = CARMASS
+		self.physicsBody?.mass = CARMASS  
 		self.physicsBody?.friction = 0.5
 		self.physicsBody?.angularDamping = 1.0
-		self.physicsBody?.linearDamping = 1.0
-		self.physicsBody?.restitution = 0.1
+		self.physicsBody?.linearDamping = 0.5
+		self.physicsBody?.restitution = 1.0
 		physicsBody?.isDynamic = true // Default is true
 		
 		
 		self.physicsBody?.categoryBitMask = PhysicsCategory.Car
 		self.physicsBody?.contactTestBitMask = PhysicsCategory.Car | PhysicsCategory.Ball | PhysicsCategory.Boards
 		
+		self.zPosition = 1
 		
-		
+		exhaust = SKEmitterNode(fileNamed: "flame.sks")
+		exhaust.position = CGPoint(x: -(self.size.width/2.5), y: 0)
+		exhaust.zRotation += CGFloat(M_PI/2)
+		exhaust.name = "exhaust"
+		self.addChild(exhaust)
 	}
 	
 	func steerTowards(direction: CGFloat)
@@ -79,7 +91,6 @@ class Car: PhysicalObject {
 		let rotationalVelocity = self.physicsBody?.angularVelocity
 		let correctionTorque = (rotationalVelocity! / (abs(requestedTorque) + 2.0))
 		
-		
 		let carVelocity = hypot((self.physicsBody?.velocity.dx)!, (self.physicsBody?.velocity.dy)!)
 
 		let carVelRatio = carVelocity / self.MAXCARSPEED
@@ -88,7 +99,7 @@ class Car: PhysicalObject {
 		/* https://www.wolframalpha.com/input/?i=graph+y+%3D+1%2F(+(x%5E3)+*+(+e%5E(1%2F(x))+-+1+)+) */
 		let adjustedTorqueFactor = 1.0/(pow(carVelRatio, 3.0) * (pow(CGFloat(M_E), 1.0/(carVelRatio)) - 1.0))
 		
-		let torqueAttenuationFactor = CGFloat(10) //CARMASS
+		let torqueAttenuationFactor = CGFloat(10) // CARMASS
 		let torque = (( -correctionTorque -  requestedTorque) * adjustedTorqueFactor) * torqueAttenuationFactor
 		self.physicsBody?.applyTorque(torque)
 		

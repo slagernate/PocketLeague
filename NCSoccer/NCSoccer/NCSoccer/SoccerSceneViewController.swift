@@ -16,7 +16,7 @@ import GameKit
 var screenSize: CGSize!
 var gill: String = "Gill Sans"
 
-var CAM_SCALE: CGFloat = 2.0
+var CAM_SCALE: CGFloat = 5.0
 var CAM_ZOOM_FACTOR: CGFloat = 1.01
 
 let findMatchNotificationKey = "findsoccermatch"
@@ -54,17 +54,16 @@ class SoccerSceneViewController: UIViewController, GKMatchmakerViewControllerDel
 		
 		let scene = MainMenuScene(size: viewSize)
 		soccerScene = SoccerScene(size: viewSize)
-		soccerScene.isPaused = true
 
 		//let scene = MainMenuScene(size: CGSize(width: viewSize.height, height: viewSize.width))
 		
 		// Configure the view.
         let skView = self.view as! SKView
-        skView.showsFPS = true
-        skView.showsNodeCount = true
+		//skView.showsFPS = true
+		//skView.showsNodeCount = true
 		
 		// Physics Debug
-		skView.showsPhysics = true
+		//skView.showsPhysics = true
 	
         /* Sprite Kit applies additional optimizations to improve rendering performance */
         skView.ignoresSiblingOrder = true

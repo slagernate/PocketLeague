@@ -49,11 +49,11 @@ class Joystick: SKSpriteNode {
 		stickLeash = (stick.size.width/2) * 1.5
 		
 		self.name = "joystick"
-
+		
 	}
 	
 	
-	func steerTowards(position: CGPoint) {
+	func steerTowards(position: CGPoint) -> (mag: CGFloat, angle: CGFloat) {
 		// Convert from absolute (soccer field) coordinates to coordinates relative to joystick base
 		// E.g. if touch == self.position then stick.position = CGPoint(x: 0, y: 0) 
 		// -Child node position is relative to parent node
@@ -68,9 +68,10 @@ class Joystick: SKSpriteNode {
 		}
 		*/
 		
-		let mag: CGFloat! = hypot(relativePosition.x, relativePosition.y)
-		if ( mag > stickLeash ) {
+		var mag: CGFloat! = hypot(relativePosition.x, relativePosition.y)
+		if (mag > stickLeash) {
 			stick.position = CGPoint(x: (cos(angle)*stickLeash), y: (sin(angle)*stickLeash))
+			mag = stickLeash
 		} else {
 			stick.position = relativePosition
 		}
@@ -78,13 +79,16 @@ class Joystick: SKSpriteNode {
 		//print(relativePosition.x)
 		#if THROTTLE
 		#else
-		steeringMagnitudeRatio = mag/stickLeash
+		steeringMagnitudeRatio = (mag/stickLeash) * 2.5
+		//print(steeringMagnitudeRatio)
 		#endif
 		
 		//print("x: \(stick.position.x), y: \(stick.position.y)")
 		//print("Steering angle: \(angle)")
 
 		steeringAngle = angle
+		
+		return (steeringMagnitudeRatio, angle)
 	}
 	
 	
