@@ -26,8 +26,6 @@ class MainMenuScene: SKScene {
 		
 		//showAds()
 		
-		// Load joystick 
-		
 		// Load sound
 		//playMenuSound = SKAction.playSoundFileNamed("menu.mp3", waitForCompletion: true)
 
@@ -35,7 +33,7 @@ class MainMenuScene: SKScene {
 		
 		backgroundColor = UIColor.white
 		
-		// Add a "champion archer title"
+		// Add a title
 		let titleLabel = SKLabelNode(fontNamed: gill)
 		titleLabel.text = "NC Soccer"
 		titleLabel.fontSize = screenSize.width/10

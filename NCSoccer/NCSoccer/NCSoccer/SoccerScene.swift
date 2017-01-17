@@ -55,19 +55,10 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 	
     override func didMove(to view: SKView) {
 		
-		//let screenRect = UIScreen.mainScreen().bounds
-		
 		// Physics
 		physicsWorld.gravity = CGVector(dx: 0, dy: 0)
 		
 		physicsWorld.contactDelegate = self
-		
-		// Create boundary for field
-		//let FieldBoundary = CGRect(x: 0, y: 0, width: screenRect.width, height: screenRect.height)
-		//let boundaryBody = SKPhysicsBody(edgeLoopFrom: self.frame)
-		//self.physicsBody = boundaryBody
-		//self.physicsBody?.categoryBitMask = PhysicsCategory.Boards
-		//self.physicsBody?.contactTestBitMask = PhysicsCategory.Ball
 		
 		loadField()
 		
@@ -91,9 +82,7 @@ class SoccerScene: SKScene, SKPhysicsContactDelegate, GKMatchDelegate {
 		cam.setScale(CAM_SCALE)
 		cam.position = CGPoint(x: FIELD_WIDTH/2.0, y: FIELD_HEIGHT/2.0)
 		self.addChild(cam)
-		
-		// Controls
-		
+				
 		// joystick
 		joyStick = Joystick()
 		joyStick.position = CGPoint(x: -frame.midX/2.0, y: -frame.midY/2.0)
