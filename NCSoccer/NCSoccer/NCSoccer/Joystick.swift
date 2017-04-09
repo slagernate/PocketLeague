@@ -4,9 +4,10 @@
 //
 //  Created by Nathan Slager on 9/24/16.
 //  Copyright © 2016 nathanslager. All rights reserved.
-//
 
 import SpriteKit
+
+let JOYSTICK_LEASH = screenSize.height/6.0
 
 class Joystick: SKSpriteNode {
 	
@@ -36,17 +37,19 @@ class Joystick: SKSpriteNode {
 		let joystickBaseSize = CGSize(width: screenSize.height/7.5, height: screenSize.height/7.5)
 		super.init(texture: joystickBaseTexture, color: UIColor.clear, size: joystickBaseSize)
 		
+		
 		// Add stick on top of joystick base
 		let joystickTexture = SKTexture(imageNamed: "joyStick@2000x2000")
 		let joystickSize = CGSize(width: screenSize.height/6.0, height: screenSize.height/6.0)
 		stick = SKSpriteNode(texture: joystickTexture, color: UIColor.clear, size: joystickSize)
 		stick.position = self.position
 		// Set stick on top of base
+		zPosition -= 1
 		stick.zPosition = self.zPosition + 1
 		self.addChild(stick)
 		
 		// Set stick leash distance
-		stickLeash = (stick.size.width/2) * 1.5
+		stickLeash = (stick.size.width*3)/4
 		
 		self.name = "joystick"
 		

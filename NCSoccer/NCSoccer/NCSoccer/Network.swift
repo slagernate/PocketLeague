@@ -11,13 +11,27 @@
 import GameKit
 
 enum MessageType {
+	case updateGameState
 	case randomNumberMessage
 	case carUpdateMessage
 	case ballUpdateMessage
 	case controlInputMessage
+	case changeRandomNumberRequest
+	case reserved1 /* For compatibility with future updates */
+	case reserved2
+	case reserved3
+	case reserved4
 	case invalid
 }
 
+struct UpdateGameStateMessage {
+	var messageType = MessageType.updateGameState
+	var gameState: GameState = .paused
+	var hostClock: UInt16 = 0
+	var hostCountdown321: UInt8 = 0
+	var hostScoreLeftTeam: UInt8 = 0
+	var hostScoreRightTeam: UInt8 = 0
+}
 // Used to randomly select host (ideally we'll use chooseBestHost(), but it wasn't working for me)
 struct RandomNumberMessage {
 	var messageType = MessageType.randomNumberMessage
@@ -49,11 +63,15 @@ struct BallUpdateMessage {
 struct ControlInputMessage {
 	var messageType = MessageType.controlInputMessage
 	
-	var steeringMagnitudeRatio: UInt32 = 10
+	//var steeringMagnitudeRatio: UInt32 = 10
+	var thrustRatio: UInt32 = 0
 	var steeringAngle: UInt32 = 0
 	var steering = false
 }
 
+struct changeRandomNumberRequest {
+	var messageType = MessageType.changeRandomNumberRequest
+}
 
 func keyMinValue(dict: [String: UInt32]) -> String? {
 	
@@ -179,3 +197,27 @@ func integerFrom(str: String) -> UInt64? {
 	
 }
 
+extension Dictionary {
+	func hasUniqueUInt32Members() -> Bool {
+		for key1 in self.keys {
+			if let v1 = self[key1] as? UInt32 {
+				for key2 in self.keys {
+					if let v2 = self[key2] as? UInt32 {
+						print("v1: \(v1), v2: \(v2)")
+						if (key1 != key2) {
+							if v1 == v2 {
+								return false
+							}
+						}
+					} else {
+						return false
+					}
+				}
+			} else {
+				return false
+			}
+		}
+		return true
+	}
+	
+}

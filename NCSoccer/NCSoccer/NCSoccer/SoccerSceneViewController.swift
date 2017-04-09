@@ -19,10 +19,8 @@ var gill: String = "Gill Sans"
 var CAM_SCALE: CGFloat = 5.0
 var CAM_ZOOM_FACTOR: CGFloat = 1.01
 
-let findMatchNotificationKey = "findsoccermatch"
+let findMatchNotificationKey = "findMatch"
 let gcNotEnabledKey = "gcNotEnabled"
-
-let TOTAL_PLAYERS = 2
 
 var gameCenterEnabled: Bool = false
 
@@ -31,13 +29,12 @@ class SoccerSceneViewController: UIViewController, GKMatchmakerViewControllerDel
 	// View Size
 	var viewSize: CGSize!
 	var soccerScene: SoccerScene!
-
 	
     override func viewDidLoad() {
         super.viewDidLoad()
 		
 		self.addObservers()
-		/*matchFinderVC.*/setLocalPlayerAuthenticator()
+		setLocalPlayerAuthenticator()
 
 		viewSize = view.bounds.size
 
@@ -53,13 +50,12 @@ class SoccerSceneViewController: UIViewController, GKMatchmakerViewControllerDel
 		*/
 		
 		let scene = MainMenuScene(size: viewSize)
-		soccerScene = SoccerScene(size: viewSize)
 
 		//let scene = MainMenuScene(size: CGSize(width: viewSize.height, height: viewSize.width))
 		
 		// Configure the view.
         let skView = self.view as! SKView
-		//skView.showsFPS = true
+		skView.showsFPS = true
 		//skView.showsNodeCount = true
 		
 		// Physics Debug
@@ -69,8 +65,9 @@ class SoccerSceneViewController: UIViewController, GKMatchmakerViewControllerDel
         skView.ignoresSiblingOrder = true
 		
         /* Set the scale mode to scale to fit the window */
-        scene.scaleMode = .aspectFill
+        scene.scaleMode = .resizeFill
 		
+		//skView.presentScene(scene)
 		skView.presentScene(scene)
 		
     }
@@ -97,15 +94,15 @@ class SoccerSceneViewController: UIViewController, GKMatchmakerViewControllerDel
     }
 	
 	
-	
-	
 	//MARK: - GKMatchmakerViewControllerDelegate Methods
 	func matchmakerViewControllerWasCancelled(_ viewController: GKMatchmakerViewController) {
-		print("matchmaker VC ws cancelled")
+		/* Return to main menu scene */
+		self.dismiss(animated: true, completion: nil)
 	}
 	
 	func matchmakerViewController(_ viewController: GKMatchmakerViewController, didFind match: GKMatch) {
 		print("MMVC found match!")
+		soccerScene = SoccerScene(size: viewSize)
 		soccerScene.match = match
 		match.delegate = soccerScene
 
@@ -113,10 +110,9 @@ class SoccerSceneViewController: UIViewController, GKMatchmakerViewControllerDel
 			print("Ready to start game!")
 			self.dismiss(animated: false, completion: nil)
 			let skview = self.view as! SKView
+			soccerScene.scaleMode = .resizeFill
 			skview.presentScene(soccerScene)
 		}
-		
-		
 	}
 	
 	func matchmakerViewController(_ viewController: GKMatchmakerViewController, didFailWithError error: Error) {
@@ -131,16 +127,19 @@ class SoccerSceneViewController: UIViewController, GKMatchmakerViewControllerDel
 		print("MMVC did find hosted players")
 	}
 	
-	
-	
 	//MARK: - Custom match finding methods
-	func findMatch() {
+	func findMatch(_ notification: NSNotification) {
 		if (gameCenterEnabled) {
-			
 			let matchRequest = GKMatchRequest()
-			matchRequest.defaultNumberOfPlayers = TOTAL_PLAYERS
-			matchRequest.maxPlayers = TOTAL_PLAYERS
-			matchRequest.minPlayers = TOTAL_PLAYERS
+			
+			var p = 4
+			if let c = notification.userInfo?["players"] as? Int {
+				p = c
+			}
+			
+			matchRequest.defaultNumberOfPlayers = p
+			matchRequest.maxPlayers = p
+			matchRequest.minPlayers = p
 			
 			let matchVC = GKMatchmakerViewController(matchRequest: matchRequest)
 			matchVC?.matchmakerDelegate = self
@@ -158,10 +157,10 @@ class SoccerSceneViewController: UIViewController, GKMatchmakerViewControllerDel
 	/* Called when the button "find match" is pressed in MainMenuScene */
 	func startMatch(withHost: GKPlayer?) {
 		let skView = self.view as! SKView!
-		let scene = SoccerScene(size: viewSize)
 		//hideAds()
 		let pushInDirection = SKTransition.push(with: SKTransitionDirection.left, duration: 0.4)
-		skView?.presentScene(scene, transition:  pushInDirection)
+		skView?.presentScene(soccerScene, transition:  pushInDirection)
+		
 	}
 	
 
@@ -192,9 +191,7 @@ class SoccerSceneViewController: UIViewController, GKMatchmakerViewControllerDel
 	}
 	
 	func addObservers() {
-		NotificationCenter.default.addObserver(self, selector: #selector(findMatch), name: NSNotification.Name(rawValue: findMatchNotificationKey), object: nil)
-		//NotificationCenter.default.addObserver(self, selector: #selector(findMatch), name: NSNotification.Name(rawValue: findMatchNotificationKey), object: nil)
-
+		NotificationCenter.default.addObserver(self, selector: #selector(findMatch(_:)), name: NSNotification.Name(rawValue: findMatchNotificationKey), object: nil)
 	}
 	
 	

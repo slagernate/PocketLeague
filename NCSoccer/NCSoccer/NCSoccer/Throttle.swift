@@ -5,7 +5,7 @@
 //  Created by Nathan Slager on 10/1/16.
 //  Copyright © 2016 nathanslager. All rights reserved.
 //
-#if THROTTLE
+//#if THROTTLE
 import SpriteKit
 
 class Throttle: SKSpriteNode {
@@ -33,14 +33,14 @@ class Throttle: SKSpriteNode {
 		let throttle_pos_max_offset = ((screenSize.height * CAM_ZOOM_SCALE)/2.0) - (screenSize.height/2.0)
 		MAX_THROTTLE_POS =  throttle_pos_max_slope - throttle_pos_max_offset
 		MIN_THROTTLE_POS = (throttleBaseSize.height * (-20.1/138.0) * CAM_ZOOM_SCALE) - (screenSize.height/CAM_ZOOM_SCALE)
-*/
+		*/
 
 		MAX_THROTTLE_POS = CGFloat(31.24/125.0)*throttleBaseSize.height
 		MIN_THROTTLE_POS = CGFloat(-18.24/125.0)*throttleBaseSize.height
 		
 		// Setup
 		throttle.zPosition = self.zPosition + 2
-		throttle.position = CGPoint(x: 0, y: (MAX_THROTTLE_POS - MIN_THROTTLE_POS)/2.0)
+		throttle.position = CGPoint(x: 0, y: MIN_THROTTLE_POS + ((MAX_THROTTLE_POS - MIN_THROTTLE_POS)/4.0))
 		self.addChild(throttle)
 
 		
@@ -49,8 +49,7 @@ class Throttle: SKSpriteNode {
 		
 	}
 	
-	
-	func moveTo(position: CGFloat) {
+	func moveTo(position: CGFloat) -> CGFloat {
 		
 		var newpos = position - self.position.y
 		if newpos > MAX_THROTTLE_POS {
@@ -62,15 +61,14 @@ class Throttle: SKSpriteNode {
 		}
 		
 		throttle.position.y = newpos
-	}
-	
-	func thrustRatio() -> CGFloat {
-		// Return a ratio of throttle thrust to max throttle thrust
+		
 		// Note: Subtracted MIN_THROTTLE_POS to keep the ratio positive (MIN_THROTTLE_POS is negative)
 		var throttleRatio = (throttle.position.y - MIN_THROTTLE_POS) / (MAX_THROTTLE_POS - MIN_THROTTLE_POS)
-		throttleRatio = (throttleRatio - 0.5) * 2.0
+		throttleRatio = (throttleRatio - 0.25) * 2.0
 		return throttleRatio
 	}
+	
+
 	
 	
 	required init?(coder aDecoder: NSCoder) {
@@ -78,4 +76,4 @@ class Throttle: SKSpriteNode {
 	}
 }
 
-#endif
+//#endif

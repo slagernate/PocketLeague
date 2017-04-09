@@ -10,40 +10,76 @@ import SpriteKit
 
 class Car: PhysicalObject {
 
+//	enum CarSpawnLocation {
+//		case topLeft
+//		case bottomLeft
+//		case bottomRight
+//		case topRight
+//	}
+//
+//	var carSpawnLocation: CarSpawnLocation!
 	let MAXCARSPEED: CGFloat = 500
-	let CARMASS: CGFloat = 50
+	let CARMASS: CGFloat = 60
 	
-	var steering: Bool
+	var startingPos: CGPoint!
+	var startingRotation: CGFloat!
+	
+	var thrustRatio: CGFloat = 0
+	var steering = false
 	var steeringMagnitudeRatio: CGFloat = 0
 	var steeringAngle: CGFloat = 0
 	
-	var diagonalLength: CGFloat
+	//var diagonalLength: CGFloat
 	var collided: Bool = false
 	var collisionCoolDown: Bool = false
 	var driftTime: UInt64 = 25
 	var collideTime: UInt64 = 0
 	var exhaust: SKEmitterNode!
+	let carSize: CGSize!
+	var leftTeam: Bool = false
 	
 	var playerID: String!
+	var playerName: String!
+	var playerNameLabel: SKLabelNode!
 	
 	init() {
-		
 		/* Temporary initialization.. will have further customization for different classes of cars */
 		let carTexture = SKTexture(imageNamed: "BasicCar")
 		let carWidth = CGFloat(screenSize.width/20)*2.0
-		let carScale = CGFloat(183.0/140.0) 
-		let carSize = CGSize(width: (carWidth*carScale), height: carWidth)
+		let carScale = CGFloat(183.0/140.0)
+		self.carSize = CGSize(width: (carWidth*carScale), height: carWidth)
+		super.init(texture: carTexture, color: UIColor.clear, size: carSize)
+		initialize()
 		
-		// Initialize movement variables
-		self.steering = false
-		self.diagonalLength = hypot(carSize.width, carSize.height)
+	}
+	
+	init(startingSpot: CGPoint, startingDirection: CGFloat, carTexture: String) {
+		/* Temporary initialization.. will have further customization for different classes of cars */
+		let carTexture = SKTexture(imageNamed: carTexture)
+		let carWidth = CGFloat(screenSize.width/20)*2.0
+		let carScale = CGFloat(183.0/140.0)
+		self.carSize = CGSize(width: (carWidth*carScale), height: carWidth)
+		super.init(texture: carTexture, color: UIColor.clear, size: carSize)
+		initialize()
+		
+		startingRotation = startingDirection
+		self.zRotation = startingDirection
+		startingPos = startingSpot
+		self.position = startingSpot
+
+		
+	}
+	
+	
+	func initialize() {
+		
 		
 		//self.steerRight = false
 		//self.steerLeft = false
-
 		
-		super.init(texture: carTexture, color: UIColor.clear, size: carSize)
 		
+		// Initialize movement variables
+		//self.diagonalLength = hypot(carSize.width, carSize.height)
 		
 		self.speed = CGFloat(MAXCARSPEED)
 		self.name = "car"
@@ -52,7 +88,7 @@ class Car: PhysicalObject {
 		//self.physicsBody = SKPhysicsBody(edgeLoopFromRect: CGRect(origin: spawnPosition, size: carSize) )
 		let carPhysicsSize = CGSize(width: self.size.width, height: self.size.height)
 		self.physicsBody = SKPhysicsBody(rectangleOf: carPhysicsSize)
-		self.physicsBody?.mass = CARMASS  
+		self.physicsBody?.mass = CARMASS
 		self.physicsBody?.friction = 0.5
 		self.physicsBody?.angularDamping = 1.0
 		self.physicsBody?.linearDamping = 0.5
@@ -65,11 +101,27 @@ class Car: PhysicalObject {
 		
 		self.zPosition = 1
 		
+		playerNameLabel = SKLabelNode()
+		playerNameLabel.fontName = gill
+		playerNameLabel.fontSize = 70
+		playerNameLabel.color = UIColor.lightGray
+		playerNameLabel.zPosition = -10
+		//let rotationConstraint = SKConstraint.zRotation(SKRange(lowerLimit: CGFloat.pi,
+		//                                                      upperLimit: CGFloat.pi))
+		//let posXConstraint = SKConstraint.positionX(SKRange(lowerLimit: 0, upperLimit: 0))
+		//let posYConstraint = SKConstraint.positionY(SKRange(lowerLimit: offset, upperLimit: offset))
+		//playerNameLabel.constraints = [rotationConstraint]//, posXConstraint, posYConstraint]
+		
 		exhaust = SKEmitterNode(fileNamed: "flame.sks")
 		exhaust.position = CGPoint(x: -(self.size.width/2.5), y: 0)
 		exhaust.zRotation += CGFloat(M_PI/2)
 		exhaust.name = "exhaust"
 		self.addChild(exhaust)
+
+	}
+	
+	func setTexture(textureName: String) {
+		texture = SKTexture(imageNamed: textureName)
 	}
 	
 	func steerTowards(direction: CGFloat)
@@ -99,7 +151,7 @@ class Car: PhysicalObject {
 		/* https://www.wolframalpha.com/input/?i=graph+y+%3D+1%2F(+(x%5E3)+*+(+e%5E(1%2F(x))+-+1+)+) */
 		let adjustedTorqueFactor = 1.0/(pow(carVelRatio, 3.0) * (pow(CGFloat(M_E), 1.0/(carVelRatio)) - 1.0))
 		
-		let torqueAttenuationFactor = CGFloat(10) // CARMASS
+		let torqueAttenuationFactor = CGFloat(CARMASS/5)
 		let torque = (( -correctionTorque -  requestedTorque) * adjustedTorqueFactor) * torqueAttenuationFactor
 		self.physicsBody?.applyTorque(torque)
 		
